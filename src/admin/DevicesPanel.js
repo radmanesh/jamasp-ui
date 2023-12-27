@@ -11,6 +11,7 @@ function DevicesPanel(props) {
 
       <Stack direction="row" spacing={2} justifyContent="space-between" sx={{ pt: 2}}>
         <Button variant="contained" color="primary">Save</Button>
+        <Button variant="contained" color="warning">Delete</Button>
         <Button variant="contained" color="secondary">Next</Button>
       </Stack>
 

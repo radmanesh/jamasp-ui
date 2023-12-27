@@ -15,9 +15,10 @@ function Copyright(props) {
   );
 }
 
-export default function SignIn() {
+export default function FitbitSignIn() {
 
   return (
+    <Container component="main" maxWidth="xs">
         <Box
           sx={{
             marginTop: 8,
@@ -30,7 +31,7 @@ export default function SignIn() {
             <LockOutlined />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Login with Fitbit
           </Typography>
           <Box  sx={{ mt: 1 }}>
             <Button
@@ -39,9 +40,11 @@ export default function SignIn() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Google Sign In
+              Fitbit Sign In
             </Button>
           </Box>
         </Box>
+        <Copyright sx={{ mt: 8, mb: 4 }} />   
+    </Container>
   );
 };

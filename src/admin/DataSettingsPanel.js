@@ -1,9 +1,8 @@
-import { Box, Button, Checkbox, Divider, FormControl, FormControlLabel, FormGroup, Stack } from '@mui/material';
-import React from 'react';
-import DetailLevelSelect from './components/DetailLevelSelect';
+import { Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, Stack } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import { Form } from 'react-router-dom';
+import React from 'react';
+import DetailLevelSelect from './components/DetailLevelSelect';
 
 function DataSettingsPanel(props) {
   return (
@@ -36,6 +35,7 @@ function DataSettingsPanel(props) {
 
       <Stack direction="row" spacing={2} justifyContent="space-between" sx={{pt:2}}>
         <Button variant="contained" color="primary">Save</Button>
+        <Button variant="contained" color="warning">Delete</Button>
         <Button variant="contained" color="secondary">Download</Button>
       </Stack>
 

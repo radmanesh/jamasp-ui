@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import { Box, Container, Tab, Tabs, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
-import { Box, Container, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Tab, Tabs, Typography } from '@mui/material';
-import InboxIcon from '@mui/icons-material/Inbox';
+import React, { useState } from 'react';
+import DataSettingsPanel from './DataSettingsPanel';
 import DevicesPanel from './DevicesPanel';
 import SensorsPanel from './SensorsPanel';
-import DataSettingsPanel from './DataSettingsPanel';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
