@@ -1,6 +1,7 @@
 import { LockOutlined } from '@mui/icons-material';
 import { Avatar, Box, Button, Container, Link, Typography } from '@mui/material';
 import React from 'react';
+import { signInWithGoogle } from '../firebase';
 
 function Copyright(props) {
   return (
@@ -34,7 +35,7 @@ export default function SignIn() {
           </Typography>
           <Box  sx={{ mt: 1 }}>
             <Button
-              type="submit"
+              onClick={signInWithGoogle}
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
