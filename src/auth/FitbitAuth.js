@@ -60,6 +60,11 @@ async function generateCodeChallenge(codeVerifier) {
 }
 
 
+/**
+ * Generates the Fitbit login URL.
+ * @returns {string} The Fitbit login URL.
+ * @throws {Error} If there is an error generating the Fitbit login URL.
+ */
 async function generateFitbitLoginUrl() {
   try {
     const codeVerifier = generateRandomString(96);
@@ -102,7 +107,6 @@ const getFitbitAuthState = async function (userId) {
       console.log("No fitbit_id");
       return null;
     }
-
 
   } catch (e) {
     console.error("Error adding document: ", e);

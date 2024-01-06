@@ -1,11 +1,11 @@
 // AuthCallback.js
-import { getAuth } from 'firebase/auth';
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../firebase';
+import { auth, storeFitbitToken } from '../firebase';
 import { getOrRenewAccessToken } from './api';
 
 export default function OAuthCallback() {
+  const [fitbitToken, setFitbitToken] = React.useState(null); // [1
   const user = auth.currentUser;
   const navigate = useNavigate();
 
@@ -31,12 +31,24 @@ export default function OAuthCallback() {
       // Send a POST request to exchange the authorization code for tokens
       console.log(code);
       getOrRenewAccessToken('get', code, code_verifier).then(
-        (getAccessCode) => {
-          console.log(getAccessCode)
+        (resToken) => {
+          console.log(resToken);
+          if (resToken.accessToken) {
+            localStorage.setItem("accessToken", resToken.accessToken);
+            localStorage.setItem("refreshToken", resToken.refreshToken);
+            localStorage.setItem("userId", user.uid);
+            setFitbitToken(resToken);
+            storeFitbitToken(user.uid, resToken.accessToken); // Call the function
+          } else {
+            console.log("getAccessCode is null");
+            alert("getAccessCode is null");
+            navigate('/');
+          }
+
         }
       );
     }
-  }, [navigate]);
+  }, [navigate, user.uid]);
 
   return <div>Authenticating...</div>;
 }

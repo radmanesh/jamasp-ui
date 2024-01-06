@@ -97,6 +97,11 @@ const signInWithGoogle = async () => {
 //   }
 // };
 
+const storeFitbitToken = async (userId, fitbitToken) => {
+  if*d
+}
+
+
 const logout = () => {
   signOut(auth);  
 };

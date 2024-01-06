@@ -46,11 +46,11 @@ export default function App() {
           </Route>
           <Route path="/auth" element={<AuthLayout />}> {/* Wrap nested routes inside a Route component */}
             <Route exact path="/auth/login" element={<Login />} />
-            {/* <Route exact path="/auth/fitbitSignin" element={<FitbitSignIn />} /> */}
-            <Route exact path="/auth/fitbit_callback" element={<OAuthCallback />} />
+              <Route exact path="/auth/fitbit_callback" element={<OAuthCallback />} />
           </Route>
         </Routes>
       </Router>
     </div>
   );
 }
+sd
