@@ -1,5 +1,6 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase";
+import { getOrRenewAccessToken } from "./api";
 
 const authorizationEndpoint = 'https://www.fitbit.com/oauth2/authorize';
 // const apiEndpoint = 'https://api.fitbit.com/oauth2/token';
@@ -108,30 +109,19 @@ const getFitbitAuthState = async function (userId) {
   }
 }
 
-function createFitbitLoginUrl() {
-  const codeVerifier = generateRandomString(96);
-  localStorage.setItem("codeVerifier", codeVerifier);
-  var result;
-  generateCodeChallenge(codeVerifier).then((codeChallenge) => {
-    // console.log(codeVerifier, codeChallenge);
-    localStorage.setItem("code_challenge", codeChallenge);
-    // Set query parameters and redirect user to OAuth2 authentication endpoint
-    const params = new URLSearchParams({
-      response_type: 'code',
-      client_id: '23RHP3',
-      //redirect_uri: 'http://localhost:3000/fitbit_callback',
-      code_challenge: codeChallenge,
-      code_challenge_method: 'S256',
-      scope: 'activity cardio_fitness electrocardiogram heartrate location nutrition oxygen_saturation profile respiratory_rate settings sleep social temperature',
-    });
-    const codeState = generateRandomString(32);
-    params.append('state', codeState);
-    localStorage.setItem("code_state", codeState);
-    result = (`${authorizationEndpoint}?${params.toString()}`);
-  });
-
-  return result;
+async function exchangeCodeForTokens(code, code_verifier) {
+  // Obtain the authorization code from the URL query parameters
+  // const code = new URLSearchParams(window.location.search).get('code');
+  if (code) {
+    // Send a POST request to exchange the authorization code for tokens
+    console.log(code);
+    const getAccessCode = await getOrRenewAccessToken('get', code, code_verifier);
+    console.log(getAccessCode);
+    return getAccessCode;
+    // Redirect to home page
+    // window.location.replace('/');
+  }
 }
 
 export default generateFitbitLoginUrl;
-export { getFitbitAuthState, createFitbitLoginUrl };
+export { getFitbitAuthState, exchangeCodeForTokens };

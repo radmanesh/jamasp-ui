@@ -14,7 +14,6 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { Navigate } from "react-router-dom";
 
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -99,7 +98,6 @@ const signInWithGoogle = async () => {
 // };
 
 const logout = () => {
-  console.log("logout");
   signOut(auth);  
 };
 

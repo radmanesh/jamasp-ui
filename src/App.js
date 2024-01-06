@@ -1,11 +1,10 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { Navigate, Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Dashboard from "./Dashboard";
 import AdminDashboard from "./admin/Dashboard";
 import NewProject from "./admin/NewProject";
 import ShowProject from "./admin/ShowProject";
-import FitbitSignIn from "./auth/FitbitSignIn";
 import Login from "./auth/Login";
 import OAuthCallback from "./auth/OAuthCallback";
 import ProtectedRoute from "./components/routes/ProtectedRoute";
@@ -38,15 +37,17 @@ export default function App() {
       <Router>
         <Routes>
           <Route element={<ProtectedRoute user={user} />}>
+            <Route path="/" element={<Navigate to="/home" />} />
             <Route exact path="/home" element={<Dashboard />} />
             <Route exact path="/admin" element={<AdminDashboard />} />
             <Route exact path="/showProject" element={<ShowProject />} />
             <Route exact path="/newProject" element={<NewProject />} />
-            <Route exact path="/auth/fitibit_callback" element={<OAuthCallback />} />
+            
           </Route>
           <Route path="/auth" element={<AuthLayout />}> {/* Wrap nested routes inside a Route component */}
             <Route exact path="/auth/login" element={<Login />} />
-            <Route exact path="/auth/fitbitSignin" element={<FitbitSignIn />} />
+            {/* <Route exact path="/auth/fitbitSignin" element={<FitbitSignIn />} /> */}
+            <Route exact path="/auth/fitbit_callback" element={<OAuthCallback />} />
           </Route>
         </Routes>
       </Router>

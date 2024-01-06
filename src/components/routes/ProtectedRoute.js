@@ -7,6 +7,7 @@ const ProtectedRoute = ({ user, children }) => {
   if (!user) {
     return <Navigate to="/auth/login" replace />
   }
+
   return children ? children : (
 
     <React.Fragment>
@@ -22,6 +23,7 @@ const ProtectedRoute = ({ user, children }) => {
     </React.Fragment>
   );
 }
+
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>

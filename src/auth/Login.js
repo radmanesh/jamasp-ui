@@ -1,9 +1,9 @@
+import { LockOutlined } from "@mui/icons-material";
 import { Avatar, Box, Button, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useNavigate } from "react-router-dom";
-import { auth,app, signInWithGoogle } from "../firebase";
-import { LockOutlined } from "@mui/icons-material";
+import { auth, signInWithGoogle } from "../firebase";
 
 function Login() {
   const [user, loading] = useAuthState(auth);

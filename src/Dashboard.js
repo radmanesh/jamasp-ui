@@ -1,8 +1,8 @@
 import { Button, Container, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import AuthenticationBtn from './auth/AuthenticationBtn';
 import { Navigate } from 'react-router-dom';
-import AuthenticationBtn from './auth/FitbitAuth';
 import { getFitbitAuthState } from './auth/FitbitAuth';
 import { auth, logout } from './firebase';
 
@@ -23,7 +23,7 @@ const Dashboard = () => {
         }
       });
     }else{
-      return <Navigate to="/auth/login" replace />
+      console.log("user is null");
     }
 
   }, [user]); // The dependency array ensures the effect runs when the access token changes
