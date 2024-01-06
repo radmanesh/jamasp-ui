@@ -6,8 +6,6 @@ import { auth,app, signInWithGoogle } from "../firebase";
 import { LockOutlined } from "@mui/icons-material";
 
 function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [user, loading] = useAuthState(auth);
   const navigate = useNavigate();
   useEffect(() => {

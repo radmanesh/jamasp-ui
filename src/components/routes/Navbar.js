@@ -1,9 +1,5 @@
-import React, { useState } from 'react';
-import { signOut } from "firebase/auth";
-import { auth } from '../../firebase';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { AppBar, Box, Button, Divider, List, SwipeableDrawer, Toolbar, Typography } from '@mui/material';
-import { useAuthState } from 'react-firebase-hooks/auth';
+import { AppBar, Toolbar, Typography } from '@mui/material';
+import React from 'react';
 
 const Navbar = () => {
     //const user = useSelector((state) => state.user.value);

@@ -1,5 +1,5 @@
+import { Container, Link, Typography } from '@mui/material';
 import React from 'react';
-import { AppBar, Toolbar, Typography, Container, Link, Box } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 const AuthLayout = () => {
   return (

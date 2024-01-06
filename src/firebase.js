@@ -1,26 +1,20 @@
+import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
 import {
   GoogleAuthProvider,
   getAuth,
   signInWithPopup,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  sendPasswordResetEmail,
-  signOut,
-  connectAuthEmulator,
+  signOut
 } from "firebase/auth";
 import {
+  addDoc,
+  collection,
+  getDocs,
   getFirestore,
   query,
-  getDocs,
-  collection,
   where,
-  addDoc,
 } from "firebase/firestore";
-import { getAnalytics } from "firebase/analytics";
-
-
-
+import { Navigate } from "react-router-dom";
 
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -42,7 +36,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-connectAuthEmulator(auth, "http://127.0.0.1:9099");
+//connectAuthEmulator(auth, "http://127.0.0.1:9099");
 const db = getFirestore(app);
 const analytics = getAnalytics(app);
 
@@ -69,52 +63,48 @@ const signInWithGoogle = async () => {
   }
 };
 
-const logInWithEmailAndPassword = async (email, password) => {
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-  } catch (err) {
-    console.error(err);
-    alert(err.message);
-  }
-};
+// const logInWithEmailAndPassword = async (email, password) => {
+//   try {
+//     await signInWithEmailAndPassword(auth, email, password);
+//   } catch (err) {
+//     console.error(err);
+//     alert(err.message);
+//   }
+// };
 
-const registerWithEmailAndPassword = async (name, email, password) => {
-  try {
-    const res = await createUserWithEmailAndPassword(auth, email, password);
-    const user = res.user;
-    await addDoc(collection(db, "users"), {
-      uid: user.uid,
-      name,
-      authProvider: "local",
-      email,
-    });
-  } catch (err) {
-    console.error(err);
-    alert(err.message);
-  }
-};
+// const registerWithEmailAndPassword = async (name, email, password) => {
+//   try {
+//     const res = await createUserWithEmailAndPassword(auth, email, password);
+//     const user = res.user;
+//     await addDoc(collection(db, "users"), {
+//       uid: user.uid,
+//       name,
+//       authProvider: "local",
+//       email,
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     alert(err.message);
+//   }
+// };
 
-const sendPasswordReset = async (email) => {
-  try {
-    await sendPasswordResetEmail(auth, email);
-    alert("Password reset link sent!");
-  } catch (err) {
-    console.error(err);
-    alert(err.message);
-  }
-};
+// const sendPasswordReset = async (email) => {
+//   try {
+//     await sendPasswordResetEmail(auth, email);
+//     alert("Password reset link sent!");
+//   } catch (err) {
+//     console.error(err);
+//     alert(err.message);
+//   }
+// };
 
 const logout = () => {
-  signOut(auth);
+  console.log("logout");
+  signOut(auth);  
 };
 
 export {
-  auth,
-  db,
-  signInWithGoogle,
-  logInWithEmailAndPassword,
-  registerWithEmailAndPassword,
-  sendPasswordReset,
-  logout,
-  app
+  app, auth,
+  db, logout, signInWithGoogle
 };
+
