@@ -35,10 +35,7 @@ const Dashboard = () => {
           }else{
             // we have the access token, we should store it in the local storage. we should also store the refresh token and user id
             // also we should store the expiration time and check if the token is expired or not.
-            setFitbitToken(fitbitToken.access_token);
-            localStorage.setItem('accessToken', fitbitToken.access_token);
-            localStorage.setItem('refreshToken', fitbitToken.refresh_token);
-            localStorage.setItem('userId', fitbitToken.user_id);
+            setFitbitToken(fitbitToken);
           }
           
         }
@@ -56,8 +53,8 @@ const Dashboard = () => {
       <Typography variant="h3">User Dashboard</Typography>
       <Button onClick={() => logout()}>Sign Out</Button>
       {fitbitToken === null && <div>You should authencate with fitbit</div>}
-      {fitbitToken.access_token === null && <AuthenticationBtn />}
-      {fitbitToken.access_token !== null && <div>Hello {fitbitToken.user_id} , you are authenticated with {fitbitToken.access_token}</div>}
+      {fitbitToken?.access_token === null && <AuthenticationBtn />}
+      {fitbitToken?.access_token !== null && <div>Hello {fitbitToken.user_id} , you are authenticated with {fitbitToken.access_token}</div>}
     </Container>
   );
 };
