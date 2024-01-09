@@ -44,7 +44,7 @@ const Dashboard = () => {
       console.log("user is null");
     }
 
-  }, [loading, user, fitbitToken]); // The dependency array ensures the effect runs when the access token changes
+  }, [loading, user]); // The dependency array ensures the effect runs when the access token changes
 
   
 
@@ -54,7 +54,7 @@ const Dashboard = () => {
       <Button onClick={() => logout()}>Sign Out</Button>
       {fitbitToken === null && <div>You should authencate with fitbit</div>}
       {fitbitToken?.access_token === null && <AuthenticationBtn />}
-      {fitbitToken?.access_token !== null && <div>Hello {fitbitToken.user_id} , you are authenticated with {fitbitToken.access_token}</div>}
+      {fitbitToken?.access_token !== null && <div>Hello {fitbitToken?.user_id} , you are authenticated with {fitbitToken?.access_token}</div>}
     </Container>
   );
 };
