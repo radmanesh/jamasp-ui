@@ -26,7 +26,7 @@ const Dashboard = () => {
           //something is wrong with the getting token
           // we should redirect to the fitbit login page
           console.log("WOWO!!!! fitbitToken is null");
-          alert("WOWO!!!! fitbitToken is null");
+          //alert("WOWO!!!! fitbitToken is null");
           return;
         }else{
           console.log(fitbitToken);

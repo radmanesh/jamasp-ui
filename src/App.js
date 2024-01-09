@@ -19,16 +19,17 @@ export default function App() {
     if (loading) { 
       // if auth state is loading
       // maybe trigger a loading screen
+      console.log("App(): auth state is loading");
       return;
     }
     if (user) {
       // User is signed in, see docs for a list of available properties
       // https://firebase.google.com/docs/reference/js/auth.user
       const uid = user.uid;
-      console.log("user is signed in  ", uid);
+      console.log("App(): user is signed in  ", uid);
     } else {
       // User is signed out
-      console.log("user is signed out");
+      console.log("App(): user is signed out");
     }
   });
 
@@ -46,7 +47,8 @@ export default function App() {
           </Route>
           <Route path="/auth" element={<AuthLayout />}> {/* Wrap nested routes inside a Route component */}
             <Route exact path="/auth/login" element={<Login />} />
-              <Route exact path="/auth/fitbit_callback" element={<OAuthCallback />} />
+            <Route exact path="/auth/fitbit_callback" element={<OAuthCallback />} />
+            {/* <Route exact path="/auth/signout" element={logout()} /> */}
           </Route>
         </Routes>
       </Router>

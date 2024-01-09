@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase';
 import { getOrRenewAccessToken } from './api';
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 
 function storeFitbitToken(userId, token) {  
@@ -34,19 +35,26 @@ function storeFitbitToken(userId, token) {
 }
 
 export default function OAuthCallback() {
-  const user = auth.currentUser;
+  const [user, loading] = useAuthState(auth);
   const navigate = useNavigate();
-
-  
   
   useEffect(() => {
+    if (loading) {
+      return;
+    }
+    
     if (user) {
       // User is signed in.
+      console.log('OAuthcallback, User is signed in.',user);
     } else {
       // No user is signed in.
       console.log('No user is signed in.');
-      navigate('/auth/login');
+      //navigate('/auth/login');
     }
+
+    // Obtain the authorization code from the URL query parameters
+    const code = new URLSearchParams(window.location.search).get('code');
+    console.log('callback, code: ',code);
 
     const code_verifier = localStorage.getItem('codeVerifier');
     if (!code_verifier) {
@@ -54,11 +62,8 @@ export default function OAuthCallback() {
       alert("code_verifier is null");
       navigate('/');
     }
-    // Obtain the authorization code from the URL query parameters
-    const code = new URLSearchParams(window.location.search).get('code');
     if (code) {
       // Send a POST request to exchange the authorization code for tokens
-      console.log(code);
       getOrRenewAccessToken('get', code, code_verifier).then(
         (resToken) => {
           console.log(resToken);
@@ -77,7 +82,7 @@ export default function OAuthCallback() {
         }
       );
     }
-  }, [navigate, user]);
+  }, [navigate, user, loading]);
 
   return <div>Authenticating...</div>;
 }

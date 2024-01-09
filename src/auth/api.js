@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const serviceBaseUrl = 'https://fitbit-oauth-service2-rxexpcoyba-ue.a.run.app/'
+const serviceBaseUrl = 'https://fitbit-oauth-service-rxexpcoyba-ue.a.run.app/'
 const getTokenUrl = serviceBaseUrl+'getToken'; //'http://getFitbitToken-jw3n47gu5q-uc.a.run.app';
 const refershTokenUrl = serviceBaseUrl+'refreshToken'; //'https://refreshFitbitToken-jw3n47gu5q-uc.a.run.app';
 

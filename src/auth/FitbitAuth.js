@@ -91,6 +91,7 @@ async function generateFitbitLoginUrl() {
     const codeState = generateRandomString(32);
     localStorage.setItem("code_state", codeState);
     params.append('state', codeState);
+    console.log('generateFitbitLoginUrl, params: ', params.toString());
     return (`${authorizationEndpoint}?${params.toString()}`);
 
   } catch (error) {
