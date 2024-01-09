@@ -6,10 +6,10 @@
  * @module FitbitAuth
  * @filepath /Users/armanrad/Documents/Projects/Work/Cut/cutsocial/jamasp-ui/src/auth/FitbitAuth.js
  */
-import { collection, getDocs, query, serverTimestamp, where } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase";
-import { getOrRenewAccessToken } from "./api";
 import { fitbit } from "../utils/settings";
+import { getOrRenewAccessToken } from "./api";
 
 const authorizationEndpoint = 'https://www.fitbit.com/oauth2/authorize';
 // const apiEndpoint = 'https://api.fitbit.com/oauth2/token';
@@ -120,6 +120,7 @@ const getFitbitAuthState = async function (userId) {
       docRef = querySnapshot.docs[0];
     }
     const token = docRef.data().fitbitData;
+    console.log("getFitbitAuthState, token: ",token);
     // check if user has logged in with fitbit
     if (!token) {
       // user has never logged in with fitbit, maybe? we should redirect to the fitbit login page. 

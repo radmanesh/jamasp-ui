@@ -30,7 +30,7 @@ const Dashboard = () => {
           return;
         }else{
           console.log(fitbitToken);
-          if(!fitbitToken.accessToken){
+          if(!fitbitToken.access_token){
             // we should redirect to the fitbit login page
             console.log("fitbitToken.accessToken is null");
             alert("fitbitToken no null but fitbitToken.accessToken is null!!!!!!")
@@ -38,10 +38,10 @@ const Dashboard = () => {
           }else{
             // we have the access token, we should store it in the local storage. we should also store the refresh token and user id
             // also we should store the expiration time and check if the token is expired or not.
-            setFitbitToken(fitbitToken.accessToken);
+            setFitbitToken(fitbitToken.access_token);
             setUserId(fitbitToken.user_id);
-            localStorage.setItem('accessToken', fitbitToken.accessToken);
-            localStorage.setItem('refreshToken', fitbitToken.refreshToken);
+            localStorage.setItem('accessToken', fitbitToken.access_token);
+            localStorage.setItem('refreshToken', fitbitToken.refresh_token);
             localStorage.setItem('userId', fitbitToken.user_id);
           }
           

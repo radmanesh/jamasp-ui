@@ -1,37 +1,41 @@
 // AuthCallback.js
+import { collection, getDocs, query, serverTimestamp, setDoc, updateDoc, where } from 'firebase/firestore';
 import React, { useEffect } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase';
 import { getOrRenewAccessToken } from './api';
-import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
-import { useAuthState } from 'react-firebase-hooks/auth';
 
 
-function storeFitbitToken(userId, token) {  
+async function storeFitbitToken(userId, token) {  
   console.log("storeFitbitToken");
   console.log(userId);
   console.log(token);
-  if(!token.user_id){
+  if (!token.user_id) {
     console.log("token.user_id is null");
     alert("token.user_id is null");
     return;
-  }else{
+  } else {
     try {
-      const docRef = doc(db, 'users', userId);
-      setDoc(docRef, 
-        {...token ,
-          timestamp: serverTimestamp() 
-        }, 
-        { merge: true }
-      );
-      
+      const q = query(collection(db, "users"), where("uid", "==", userId));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, " => ", doc.data());
+        updateDoc(doc.ref, 
+          {
+            fitbitData: {
+              ...token,
+              timestamp: serverTimestamp()
+            }
+          }
+        );
+      }); 
     } catch (error) {
-      
+      console.error("Error adding document: ", error);
+      // Handle error
     }
-    
   }
-
-
 }
 
 export default function OAuthCallback() {
@@ -67,12 +71,16 @@ export default function OAuthCallback() {
       getOrRenewAccessToken('get', code, code_verifier).then(
         (resToken) => {
           console.log(resToken);
-          if (resToken.accessToken) {
-            localStorage.setItem("accessToken", resToken.accessToken);
-            localStorage.setItem("refreshToken", resToken.refreshToken);
+          if (resToken.access_token) {
+            localStorage.setItem("accessToken", resToken.access_token);
+            localStorage.setItem("refreshToken", resToken.refresh_token);
+            localStorage.setItem("fitbitUser", resToken.user_id);
             localStorage.setItem("userId", user.uid);
 
-            storeFitbitToken(user.uid, resToken); // Call the function
+            storeFitbitToken(user.uid, resToken).then( () => {
+              console.log("storeFitbitToken done");
+              navigate('/');
+            } ); // Call the function
           } else {
             console.log("getAccessCode is null");
             alert("getAccessCode is null");
