@@ -1,5 +1,4 @@
 import { Button, Container, Typography } from '@mui/material';
-import { setUserId } from 'firebase/analytics';
 import React, { useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import AuthenticationBtn from './auth/AuthenticationBtn';
