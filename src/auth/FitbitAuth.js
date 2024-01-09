@@ -1,6 +1,15 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
+/**
+ * This file contains the implementation of Fitbit authentication functionality.
+ * It includes functions for generating the Fitbit login URL, retrieving the Fitbit authentication state for a user,
+ * and exchanging the authorization code for tokens.
+ * 
+ * @module FitbitAuth
+ * @filepath /Users/armanrad/Documents/Projects/Work/Cut/cutsocial/jamasp-ui/src/auth/FitbitAuth.js
+ */
+import { collection, getDocs, query, serverTimestamp, where } from "firebase/firestore";
 import { db } from "../firebase";
 import { getOrRenewAccessToken } from "./api";
+import { fitbit } from "../utils/settings";
 
 const authorizationEndpoint = 'https://www.fitbit.com/oauth2/authorize';
 // const apiEndpoint = 'https://api.fitbit.com/oauth2/token';
@@ -73,7 +82,7 @@ async function generateFitbitLoginUrl() {
     localStorage.setItem("code_challenge", codeChallenge);
     const params = new URLSearchParams({
       response_type: 'code',
-      client_id: '23RHP3',
+      client_id: fitbit.clientId,
       //redirect_uri: 'http://localhost:3000/fitbit_callback',
       code_challenge: codeChallenge,
       code_challenge_method: 'S256',
@@ -83,7 +92,7 @@ async function generateFitbitLoginUrl() {
     localStorage.setItem("code_state", codeState);
     params.append('state', codeState);
     return (`${authorizationEndpoint}?${params.toString()}`);
-    
+
   } catch (error) {
     console.error("Error generating Fitbit login URL:", error);
     throw error; // Re-throw to potentially handle upstream
@@ -91,25 +100,38 @@ async function generateFitbitLoginUrl() {
 
 }
 
+/**
+ * Retrieves the Fitbit authentication state for a given user. first checks database has the fitbit token. if no token is available it should redirect to the fitbit login page. and if it needs refresh it should (better to do it in another module) refresh the token and store it in the database.
+ * @param {string} userId - The ID of the google user.
+ * @returns {Promise<Object|null>} - A promise that resolves to the Fitbit access token if the user has logged in with Fitbit, or null if the user has never logged in with Fitbit.
+ */
 const getFitbitAuthState = async function (userId) {
   console.log(userId);
   try {
     const q = query(collection(db, "users"), where("uid", "==", userId));
     const querySnapshot = await getDocs(q);
+    var docRef;
     if (querySnapshot.size === 0) {
+      // the user has nev
       console.log("No such document!");
       return;
+    } else {
+      docRef = querySnapshot.docs[0];
     }
-    const dbUser = querySnapshot.docs[0].data();
+    const token = docRef.data().fitbitData;
     // check if user has logged in with fitbit
-    if (!dbUser.fitbit_id) {
-      // user has never logged in with fitbit
-      console.log("No fitbit_id");
-      return null;
+    if (!token) {
+      // user has never logged in with fitbit, maybe? we should redirect to the fitbit login page. 
+      console.log("No fitbit token");
+      return;
+    } else if (token.user_id) {
+      //we should check here if there is a token and it is valid and not expired.
+      console.log(token);
+      return token;
     }
-
   } catch (e) {
     console.error("Error adding document: ", e);
+    return;
   }
 }
 
@@ -128,4 +150,5 @@ async function exchangeCodeForTokens(code, code_verifier) {
 }
 
 export default generateFitbitLoginUrl;
-export { getFitbitAuthState, exchangeCodeForTokens };
+export { exchangeCodeForTokens, getFitbitAuthState };
+

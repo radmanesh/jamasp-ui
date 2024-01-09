@@ -1,24 +1,53 @@
 // AuthCallback.js
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth, storeFitbitToken } from '../firebase';
+import { auth, db } from '../firebase';
 import { getOrRenewAccessToken } from './api';
+import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 
-export default function OAuthCallback() {
-  const [fitbitToken, setFitbitToken] = React.useState(null); // [1
-  const user = auth.currentUser;
-  const navigate = useNavigate();
 
-  if (user) {
-    // User is signed in.
-  } else {
-    // No user is signed in.
-    console.log('No user is signed in.');
-    navigate('/auth/login');
+function storeFitbitToken(userId, token) {  
+  console.log("storeFitbitToken");
+  console.log(userId);
+  console.log(token);
+  if(!token.user_id){
+    console.log("token.user_id is null");
+    alert("token.user_id is null");
+    return;
+  }else{
+    try {
+      const docRef = doc(db, 'users', userId);
+      setDoc(docRef, 
+        {...token ,
+          timestamp: serverTimestamp() 
+        }, 
+        { merge: true }
+      );
+      
+    } catch (error) {
+      
+    }
+    
   }
 
 
+}
+
+export default function OAuthCallback() {
+  const user = auth.currentUser;
+  const navigate = useNavigate();
+
+  
+  
   useEffect(() => {
+    if (user) {
+      // User is signed in.
+    } else {
+      // No user is signed in.
+      console.log('No user is signed in.');
+      navigate('/auth/login');
+    }
+
     const code_verifier = localStorage.getItem('codeVerifier');
     if (!code_verifier) {
       console.log("code_verifier is null");
@@ -37,8 +66,8 @@ export default function OAuthCallback() {
             localStorage.setItem("accessToken", resToken.accessToken);
             localStorage.setItem("refreshToken", resToken.refreshToken);
             localStorage.setItem("userId", user.uid);
-            setFitbitToken(resToken);
-            storeFitbitToken(user.uid, resToken.accessToken); // Call the function
+
+            storeFitbitToken(user.uid, resToken); // Call the function
           } else {
             console.log("getAccessCode is null");
             alert("getAccessCode is null");
@@ -48,7 +77,7 @@ export default function OAuthCallback() {
         }
       );
     }
-  }, [navigate, user.uid]);
+  }, [navigate, user]);
 
   return <div>Authenticating...</div>;
 }

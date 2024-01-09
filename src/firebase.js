@@ -97,17 +97,12 @@ const signInWithGoogle = async () => {
 //   }
 // };
 
-const storeFitbitToken = async (userId, fitbitToken) => {
-  if*d
-}
-
-
 const logout = () => {
   signOut(auth);  
 };
 
 export {
-  app, auth,
+  app, auth, analytics,
   db, logout, signInWithGoogle
 };
 
