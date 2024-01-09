@@ -18,16 +18,16 @@ const Dashboard = () => {
     }
  
     if (user){
-      getFitbitAuthState(user.uid).then((fitbitToken) => {
-        if(!fitbitToken){
+      getFitbitAuthState(user.uid).then((fitbit_token) => {
+        if(!fitbit_token){
           //something is wrong with the getting token
           // we should redirect to the fitbit login page
           console.log("WOWO!!!! fitbitToken is null");
           //alert("WOWO!!!! fitbitToken is null");
           return;
         }else{
-          console.log(fitbitToken);
-          if(fitbitToken.access_token===null){
+          console.log(fitbit_token);
+          if(fitbit_token.access_token===null){
             // we should redirect to the fitbit login page
             console.log("fitbitToken.accessToken is null");
             //alert("fitbitToken no null but fitbitToken.accessToken is null!!!!!!")
@@ -35,7 +35,7 @@ const Dashboard = () => {
           }else{
             // we have the access token, we should store it in the local storage. we should also store the refresh token and user id
             // also we should store the expiration time and check if the token is expired or not.
-            setFitbitToken(fitbitToken);
+            setFitbitToken(fitbit_token);
           }
           
         }
@@ -53,8 +53,8 @@ const Dashboard = () => {
       <Typography variant="h3">User Dashboard</Typography>
       <Button onClick={() => logout()}>Sign Out</Button>
       {fitbitToken === null && <div>You should authencate with fitbit</div>}
-      {fitbitToken?.access_token === null && <AuthenticationBtn />}
-      {fitbitToken?.access_token !== null && <div>Hello {fitbitToken?.user_id} , you are authenticated with {fitbitToken?.access_token}</div>}
+      {fitbitToken === null && <AuthenticationBtn />}
+      {fitbitToken !== null && <div>Hello {fitbitToken?.user_id} , you are authenticated with {fitbitToken?.access_token}</div>}
     </Container>
   );
 };
