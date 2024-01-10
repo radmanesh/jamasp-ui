@@ -1,16 +1,55 @@
 import { Box, Button, Container, TextField, Typography } from '@mui/material';
 import React from 'react';
+import { db } from '../firebase';
+import { useNavigate } from 'react-router-dom';
+import { Timestamp, collection } from 'firebase/firestore';
+import { addDoc } from 'firebase/firestore';
+import getAllFitbitUsersId, { getAllSensorsId } from './utils/utils';
+
+// Create a new project
 
 const NewProject = () => {
 
+  const navagator = useNavigate();
+
+  /**
+   * Handles the form submission for creating a new project.
+   * @param {Event} event - The form submission event.
+   */
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      projectName: data.get('name')
+    const projectName = data.get("name");
+
+    getAllFitbitUsersId().then((fitbitUserIds) => {
+      // Add the project to Firestore
+      const projectDoc = {
+        name: projectName,
+        devices: fitbitUserIds,
+        sensors: getAllSensorsId(),
+        settings: {
+          detailLevel: '1m',
+          dateRange: {
+            from: Timestamp.fromMillis(new Date('2023-12-1').getTime()),
+            to: Timestamp.fromMillis(new Date('2024-1-1').getTime()),
+          },
+          enabled: true,
+        },
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+      };
+      console.log(projectDoc);
+
+      addDoc(collection(db, "projects"), projectDoc).then((docRef) => {
+        const projectId = docRef.id;
+        console.log("Project added to Firestore with ID:", projectId);
+        // Redirect to the project page
+        navagator(`/showProject/${projectId}`);
+      });
     });
   };
 
+  // Render the form
   return (
     <Container maxWidth="lg">
 

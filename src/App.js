@@ -18,11 +18,11 @@ export default function App() {
     <div className="app">
       <Router>
         <Routes>
-          <Route path="/" element={<ProtectedRoute user={user} />}>
-            {/* <Route exact path="/" element={<Navigate to="/home" />} /> */}
+          <Route path="/" element={<ProtectedRoute user={user} loading={loading} />}>
+            <Route exact path="/" element={<Navigate to="/home" />} />
             <Route exact path="/admin" element={<AdminDashboard />} />
             <Route exact path="/home" element={<Dashboard />} />
-            <Route exact path="/showProject" element={<ShowProject />} />
+            <Route exact path="/showProject/:projectId" element={<ShowProject />} />
             <Route exact path="/newProject" element={<NewProject />} />
             
           </Route>

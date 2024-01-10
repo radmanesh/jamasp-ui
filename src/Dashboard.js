@@ -54,7 +54,7 @@ const Dashboard = () => {
       <Button onClick={() => logout()}>Sign Out</Button>
       {fitbitToken === null && <div>You should authencate with fitbit</div>}
       {fitbitToken === null && <AuthenticationBtn />}
-      {fitbitToken !== null && <div>Hello {fitbitToken?.user_id} , you are authenticated with {fitbitToken?.access_token}</div>}
+      {fitbitToken !== null && <div>Hello {fitbitToken?.user_id} <br /> You are authenticated with {fitbitToken?.access_token}</div>}
     </Container>
   );
 };

@@ -108,7 +108,11 @@ const sensors = [
   }
 ];
 
-
+/**
+ * 
+ * @param {*} props 
+ * @returns 
+ */
 
 function SensorsPanel(props) {
   return (
@@ -139,3 +143,4 @@ function SensorsPanel(props) {
 }
 
 export default SensorsPanel;
+export { sensors };
