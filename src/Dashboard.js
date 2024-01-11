@@ -52,7 +52,7 @@ const Dashboard = () => {
     <Container maxWidth="sm">
       <Typography variant="h3">User Dashboard</Typography>
       <Button onClick={() => logout()}>Sign Out</Button>
-      {fitbitToken === null && <div>You should authencate with fitbit</div>}
+      {fitbitToken === null && <div>You should authenticate with fitbit</div>}
       {fitbitToken === null && <AuthenticationBtn />}
       {fitbitToken !== null && <div>Hello {fitbitToken?.user_id} <br /> You are authenticated with {fitbitToken?.access_token}</div>}
     </Container>

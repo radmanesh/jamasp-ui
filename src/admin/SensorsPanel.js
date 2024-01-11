@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, FormControlLabel, FormGroup, Stack } from '@mui/material';
+import { Box, Checkbox, FormControlLabel, FormGroup } from '@mui/material';
 import React from 'react';
 
 const sensors = [
@@ -94,7 +94,7 @@ const sensors = [
     id: "Temperature_Core",
     label: "Temperature (Core) Summary",
     link: "/1/user/[user-id]/temp/core/date/[start-date]/[end-date].json",
-    description: "rreturns Temperature (Core) data for a date range. Temperature (Core) data applies specifically to data logged manually by the user on a given day. It only returns a value for dates on which the Fitbit device was able to record Temperature (Core) data and the maximum date range cannot exceed 30 days.",
+    description: "returns Temperature (Core) data for a date range. Temperature (Core) data applies specifically to data logged manually by the user on a given day. It only returns a value for dates on which the Fitbit device was able to record Temperature (Core) data and the maximum date range cannot exceed 30 days.",
     arguments: ['user-id', 'start-date', 'end-date'],
     parameters: []
   },
@@ -115,6 +115,12 @@ const sensors = [
  */
 
 function SensorsPanel(props) {
+  const { userSensors, project , onUserInput } = props;
+
+  const handleCheckboxChange = (sensorId, isChecked) => {
+    onUserInput(sensorId, isChecked);
+  };
+
   return (
     <Box
       component="form"
@@ -127,16 +133,12 @@ function SensorsPanel(props) {
       <FormGroup>
         {sensors.map((sensor, index) => (
           <FormControlLabel
-            control={index === 0 ? <Checkbox defaultChecked /> : <Checkbox />}
+            control={<Checkbox checked={userSensors.includes(sensor.id)} onChange={(e) => handleCheckboxChange(sensor.id, e.target.checked)} />}
+            key={sensor.id}
             label={sensor.label}
           />
         ))}
       </FormGroup>
-
-      <Stack direction="row" spacing={2} justifyContent="space-between" sx={{ pt: 2 }}>
-        <Button variant="contained" color="primary">Save</Button>
-        <Button variant="contained" color="secondary">Next</Button>
-      </Stack>
 
     </Box>
   )

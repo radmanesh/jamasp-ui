@@ -1,10 +1,16 @@
-import { Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, Stack } from '@mui/material';
+import { Box, Checkbox, FormControl, FormControlLabel, FormGroup, Stack } from '@mui/material';
 import { DateTimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
+import { Timestamp } from 'firebase/firestore';
 import React from 'react';
 import DetailLevelSelect from './components/DetailLevelSelect';
 
 function DataSettingsPanel(props) {
+  const { project, onUserInput, userSettings, onDateChange } = props;
+  console.log('from', userSettings.dateRange.from, userSettings.dateRange.from instanceof Timestamp,userSettings.dateRange.from.toDate(), userSettings.dateRange.from.toDate() instanceof Date);
+  let fromDayjs = dayjs(userSettings.dateRange.from.toDate());
+  let toDayjs = dayjs(userSettings.dateRange.to.toDate());
+
   return (
     <Box
       component="form"
@@ -17,27 +23,31 @@ function DataSettingsPanel(props) {
     >
       <FormGroup>
         <FormControl>
-          <FormControlLabel control={<DetailLevelSelect />} label="" />
+        <FormControlLabel
+            control={
+              <DetailLevelSelect detailLevel={userSettings.detailLevel} onUserInput={onUserInput} />
+            }
+            label="" 
+          />
         </FormControl>
       </FormGroup>
 
       
-      <Stack direction="row" spacing={2} justifyContent="space-evenly" sx={{ p: 1}}>
-        <DateTimePicker label="From" defaultValue={dayjs('2023-04-17T00:00')} />    
-        <DateTimePicker label="To" defaultValue={dayjs('2023-12-17T00:00')} />
+      <Stack direction="row" spacing={2} justifyContent="space-evenly" sx={{ p: 1 }}>
+        <DateTimePicker label="From" defaultValue={new Date(2023, 12, 1)} value={fromDayjs} onChange={(val) => onDateChange('from', Timestamp.fromDate(val.toDate()))} />
+        <DateTimePicker label="To" defaultValue={new Date(2024, 1, 1)} value={toDayjs} onChange={(val) => onDateChange('to', Timestamp.fromDate(val.toDate()))} />
       </Stack>
       
       <FormGroup>
         <FormControl>
-          <FormControlLabel control={<Checkbox />} label="Enabled?" />
+        <FormControlLabel
+            control={
+              <Checkbox checked={userSettings.enabled} onChange={(e) => onUserInput('enabled', e.target.checked)} name="enabled" />
+            }
+            label="Enabled?"
+          />
         </FormControl>
       </FormGroup>
-
-      <Stack direction="row" spacing={2} justifyContent="space-between" sx={{pt:2}}>
-        <Button variant="contained" color="primary">Save</Button>
-        <Button variant="contained" color="warning">Delete</Button>
-        <Button variant="contained" color="secondary">Download</Button>
-      </Stack>
 
     </Box>
   )

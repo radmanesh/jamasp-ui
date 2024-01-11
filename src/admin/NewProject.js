@@ -10,7 +10,7 @@ import getAllFitbitUsersId, { getAllSensorsId } from './utils/utils';
 
 const NewProject = () => {
 
-  const navagator = useNavigate();
+  const navigator = useNavigate();
 
   /**
    * Handles the form submission for creating a new project.
@@ -28,23 +28,23 @@ const NewProject = () => {
         devices: fitbitUserIds,
         sensors: getAllSensorsId(),
         settings: {
-          detailLevel: '1m',
+          detailLevel: '1min',
           dateRange: {
-            from: Timestamp.fromMillis(new Date('2023-12-1').getTime()),
-            to: Timestamp.fromMillis(new Date('2024-1-1').getTime()),
+            from: Timestamp.fromMillis(new Date(2023, 12, 1).getTime()),
+            to: Timestamp.fromMillis(new Date(2024, 1 , 1).getTime()),
           },
           enabled: true,
         },
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
       };
-      console.log(projectDoc);
+      //console.log(projectDoc);
 
       addDoc(collection(db, "projects"), projectDoc).then((docRef) => {
         const projectId = docRef.id;
-        console.log("Project added to Firestore with ID:", projectId);
+        console.log("Project added to Firestore with ID:", projectId, projectDoc);
         // Redirect to the project page
-        navagator(`/showProject/${projectId}`);
+        navigator(`/showProject/${projectId}`);
       });
     });
   };

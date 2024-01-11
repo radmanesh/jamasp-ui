@@ -1,10 +1,10 @@
-import { Button, Checkbox, FormControlLabel, FormGroup, Stack } from '@mui/material';
+import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
 
 function DevicesPanel(props) {
-  const { project } = props;
+  const { project , onUserInput , userDevices } = props;
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -18,19 +18,26 @@ function DevicesPanel(props) {
     fetchUsers();
   }, []);
 
+  const handleCheckboxChange = (user, isChecked) => {
+    onUserInput(user, isChecked);
+  };
+
   return (
     <React.Fragment>
       <FormGroup>
         {users.map((user, index) => (
-          <FormControlLabel key={index} control={<Checkbox defaultChecked />} label={`${user.name} | ${user?.fitbitData?.user_id}`} />
-        ))}
+          <FormControlLabel 
+          key={index} 
+          control={
+            <Checkbox 
+              checked={userDevices.includes(user?.fitbitData?.user_id)}
+              onChange={(e) => handleCheckboxChange(user?.fitbitData?.user_id, e.target.checked)} 
+            />
+          } 
+          label={`${user.name} | ${user?.fitbitData?.user_id}`} 
+        />
+      ))}
       </FormGroup>
-
-      <Stack direction="row" spacing={2} justifyContent="space-between" sx={{ pt: 2}}>
-        <Button variant="contained" color="primary">Save</Button>
-        <Button variant="contained" color="warning">Delete</Button>
-        <Button variant="contained" color="secondary">Next</Button>
-      </Stack>
 
     </React.Fragment>
 

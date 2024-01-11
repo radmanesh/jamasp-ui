@@ -4,7 +4,9 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import * as React from 'react';
 
-export default function DetailLevelSelect() {
+export default function DetailLevelSelect(props) {
+  const { onUserInput, detailLevel } = props;
+
   const itemsList = [
     {
       id: 1,
@@ -27,10 +29,9 @@ export default function DetailLevelSelect() {
       value: '1s'
     },
   ]
-  const [detailLevel, setDetailLevel] = React.useState(itemsList[0].value);
 
   const handleChange = (event) => {
-    setDetailLevel(event.target.value);
+    onUserInput('detailLevel', event.target.value);
   };
 
   return (
@@ -45,7 +46,7 @@ export default function DetailLevelSelect() {
         onChange={handleChange}
       >
         {itemsList.map((item) => (
-          <MenuItem value={item.value}>{item.name}</MenuItem>
+          <MenuItem key={item.id} value={item.value}>{item.name}</MenuItem>
         ))}
       </Select>
     </FormControl>
