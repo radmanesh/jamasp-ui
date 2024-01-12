@@ -1,10 +1,10 @@
-import { onAuthStateChanged } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Navigate, Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Dashboard from "./Dashboard";
 import AdminDashboard from "./admin/Dashboard";
 import NewProject from "./admin/NewProject";
 import ShowProject from "./admin/ShowProject";
+import { AuthContext } from './auth/AuthContext';
 import Login from "./auth/Login";
 import OAuthCallback from "./auth/OAuthCallback";
 import ProtectedRoute from "./components/routes/ProtectedRoute";
@@ -16,6 +16,7 @@ export default function App() {
   const [user, loading] = useAuthState(auth);
   return (
     <div className="app">
+      <AuthContext.Provider value={user}>
       <Router>
         <Routes>
           <Route path="/" element={<ProtectedRoute user={user} loading={loading} />}>
@@ -33,6 +34,7 @@ export default function App() {
           </Route>
         </Routes>
       </Router>
+      </AuthContext.Provider>
     </div>
   );
 }

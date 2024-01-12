@@ -11,6 +11,9 @@ function DataSettingsPanel(props) {
   let fromDayjs = dayjs(userSettings.dateRange.from.toDate());
   let toDayjs = dayjs(userSettings.dateRange.to.toDate());
 
+  // @TODO: Handle time also not just date
+  // todo: handle timezones and project
+
   return (
     <Box
       component="form"

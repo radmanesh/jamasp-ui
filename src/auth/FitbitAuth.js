@@ -6,7 +6,7 @@
  * @module FitbitAuth
  * @filepath /Users/armanrad/Documents/Projects/Work/Cut/cutsocial/jamasp-ui/src/auth/FitbitAuth.js
  */
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { db } from "../firebase";
 import { fitbit } from "../utils/settings";
 import { getOrRenewAccessToken } from "./api";
@@ -68,6 +68,50 @@ async function generateCodeChallenge(codeVerifier) {
   }
 }
 
+/**
+ * Removes a device for a specific user.
+ * @param {string} userId - google user.id.
+ * @param {string} deviceId - fitibit user_id. The ID of the device to be removed.
+ * @returns {Promise<Object|void>} - A promise that resolves to the token object if it exists and is valid, or void if there is an error or no token.
+ */
+async function removeDevice(userId, deviceId) { 
+  try {
+    const q = query(collection(db, "users"), where("uid", "==", userId));
+    const querySnapshot = await getDocs(q);
+    var docRef;
+    if (querySnapshot.size === 0) {
+      // the user has nev
+      console.log("No such document!");
+      return;
+    } else {
+      docRef = querySnapshot.docs[0];
+    }
+    const userObj = docRef.data();
+    console.log("userObj", userObj);
+    console.log("getFitbitAuthState, token: ",userObj?.fitbitData?.access_token);
+    // check if user has logged in with fitbit
+    if (!userObj.fitbitData) {
+      // user has never logged in with fitbit, maybe? we should redirect to the fitbit login page. 
+      console.log("No fitbit token");
+      return;
+    } else {
+      // we should remove the device from the user's devices list
+      try {
+        const { fitbitData , ...newUser} = userObj;
+        console.log("new", newUser);
+        // update the user
+        await updateDoc(docRef, { ...newUser});
+        console.log("Document successfully updated!");
+        return newUser;        
+      } catch (error) {
+        console.error("Error removing device:", error); 
+      }
+    }
+  } catch (e) {
+    console.error("Error adding document: ", e);
+    return null;
+  }
+}
 
 /**
  * Generates the Fitbit login URL.
@@ -107,7 +151,7 @@ async function generateFitbitLoginUrl() {
  * @returns {Promise<Object|null>} - A promise that resolves to the Fitbit access token if the user has logged in with Fitbit, or null if the user has never logged in with Fitbit.
  */
 const getFitbitAuthState = async function (userId) {
-  console.log(userId);
+  //console.log(userId);
   try {
     const q = query(collection(db, "users"), where("uid", "==", userId));
     const querySnapshot = await getDocs(q);
@@ -152,5 +196,5 @@ async function exchangeCodeForTokens(code, code_verifier) {
 }
 
 export default generateFitbitLoginUrl;
-export { exchangeCodeForTokens, getFitbitAuthState };
+export { exchangeCodeForTokens, getFitbitAuthState ,removeDevice };
 

@@ -2,12 +2,23 @@ import { Button, Container, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import AuthenticationBtn from './auth/AuthenticationBtn';
-import { getFitbitAuthState } from './auth/FitbitAuth';
+import { getFitbitAuthState , removeDevice } from './auth/FitbitAuth';
 import { auth, logout } from './firebase';
 
 const Dashboard = () => {
   const [user, loading] = useAuthState(auth);
   const [fitbitToken, setFitbitToken] = useState(null);
+
+  const removeUserDevice = () => {
+    if(user){
+      removeDevice(user.uid, fitbitToken.user_id).then((newUser) => {
+        console.log("newUser", newUser);
+        setFitbitToken(null);
+      });
+    }else{
+      console.log("user is null");
+    }
+  }
 
   // This is a demonstration for requesting data scopes
   // Could for fetching should be placed in a separate file.
@@ -54,7 +65,12 @@ const Dashboard = () => {
       <Button onClick={() => logout()}>Sign Out</Button>
       {fitbitToken === null && <div>You should authenticate with fitbit</div>}
       {fitbitToken === null && <AuthenticationBtn />}
-      {fitbitToken !== null && <div>Hello {fitbitToken?.user_id} <br /> You are authenticated with {fitbitToken?.access_token}</div>}
+      {fitbitToken !== null && 
+        <div>
+          Hello {fitbitToken?.user_id} <br /> You are authenticated with {fitbitToken?.access_token}
+          <button onClick={() => setFitbitToken(null)}> Device 2 null </button>
+          <button onClick={() => removeUserDevice() }>Remove Device</button>
+        </div>}
     </Container>
   );
 };
