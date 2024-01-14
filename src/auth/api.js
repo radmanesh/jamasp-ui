@@ -10,43 +10,38 @@
  * @param {Object} options.project - The project object.
  */
 import axios from 'axios';
-import { array } from 'prop-types';
 import { sensors as sensorsList } from '../admin/sensors';
 import moment from 'moment';
 
 const serviceBaseUrl = 'https://fitbit-oauth-service-rxexpcoyba-ue.a.run.app/'
 const getTokenUrl = serviceBaseUrl + 'getToken'; //'http://getFitbitToken-jw3n47gu5q-uc.a.run.app';
 const refershTokenUrl = serviceBaseUrl + 'refreshToken'; //'https://refreshFitbitToken-jw3n47gu5q-uc.a.run.app';
+const fitbitApiBaseUrl = 'https://api.fitbit.com';
 
 const generateAPIEndpoint = (sensor, parameters) => {
 	let apiParams = Object.assign({}, ...sensor.arguments.map((arg, index) => {
 		let value = parameters[arg] ? parameters[arg] : sensor.defaultValues[index];
 		if ((arg === 'start-date' || arg === 'end-date') && value.toDate) {
-			value = value.toDate();
-			value = moment(value).format('MM-DD-YYYY');
+			value = moment(value.toDate()).format('MM-DD-YYYY');
 		}
 		return { [arg]: value };
 	}));
 	console.log("apiParams: ", apiParams);
 
-	const newStr = sensor.link.replace(/\[(.*?)\]/g, (match, p1) => apiParams[p1]);
+	const newStr = fitbitApiBaseUrl + sensor.link.replace(/\[(.*?)\]/g, (match, p1) => apiParams[p1]);
 	console.log("result", newStr);
 	return newStr;
 }
 
 const getProjectEndopoints = (project) => {
 	const apiEndpoints = [];
-	array.forEach(project.devices, (device) => {
-		// const parameters = { 'user-id': device.id, 'start-date': project.settings.dateRange.from, 'end-date': project.settings.dateRange.to, 'detail-level': project.settings.detailLevel };
-		array.forEach(project.sensors, (sensor) => {
-			const selectedSensors = sensorsList.filter((item) => item.id === sensor).map((item) => item.link);
-			selectedSensors.forEach((sensor) => {
-				apiEndpoints.push(generateAPIEndpoint(sensor, { 'user-id': device.id, 'start-date': project.settings.dateRange.from, 'end-date': project.settings.dateRange.to, 'detail-level': project.settings.detailLevel }));
-			});
+	project.devices.forEach((device) => {
+		const selectedSensors = sensorsList.filter((item) => project.sensors.includes(item.id));
+		console.log("selectedSensors: ", selectedSensors);
+		selectedSensors.forEach((sensor) => {
+			apiEndpoints.push(generateAPIEndpoint(sensor, { 'user-id': device, 'start-date': project.settings.dateRange.from, 'end-date': project.settings.dateRange.to, 'detail-level': project.settings.detailLevel }));
 		});
-
 	});
-
 	return apiEndpoints;
 }
 

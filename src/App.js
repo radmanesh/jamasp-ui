@@ -14,6 +14,7 @@ import AuthLayout from "./layout/AuthLayout"; // Add missing import statement
 
 export default function App() {
   const [user, loading] = useAuthState(auth);
+  
   return (
     <div className="app">
       <AuthContext.Provider value={user}>

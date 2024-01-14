@@ -9,6 +9,7 @@ import DevicesPanel from './DevicesPanel';
 import SensorsPanel from './SensorsPanel';
 import { fetchFibbitApiData } from '../auth/api';
 import { CustomTabPanel } from './CustomTabPanel';
+import { getFitbitAuthState } from '../auth/FitbitAuth';
 
 /**
  * Renders the ShowProject component.
@@ -33,8 +34,7 @@ const ShowProject = () => {
 
   useEffect(() => {
       console.log(user);
-      console.log(project);
-    }, [user, project]
+    }, []
   );
 
   /**
@@ -167,10 +167,12 @@ const ShowProject = () => {
   /**
    * Handle the download of the project as a JSON file.
    */
-  const handleDownload = () => {
-    console.log("handleDownload", project);
-    console.log("user", user);
-    const result = fetchFibbitApiData({ fitibitToken: user.fitbitData, project: project, updateResponses: setApiResponse });
+  const handleDownload = async () => {
+    console.log("handleDownload", project, user );
+    const fitbitToken = await getFitbitAuthState(user.uid)
+    console.log("fitbitToken", fitbitToken);
+    const result = fetchFibbitApiData({ fitibitToken: fitbitToken, project: project, updateResponses: setApiResponse });
+    console.log("result: ", result);
     const jsonOutput = handleGenerateJsonDownload(result, `${project.name}-${Date.now()}.json`);
     console.log("jsonOutput: ", jsonOutput);
 

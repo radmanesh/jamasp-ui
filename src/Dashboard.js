@@ -9,16 +9,6 @@ const Dashboard = () => {
   const [user, loading] = useAuthState(auth);
   const [fitbitToken, setFitbitToken] = useState(null);
 
-  const removeUserDevice = () => {
-    if(user){
-      removeDevice(user.uid).then((newUser) => {
-        console.log("newUser", newUser);
-        setFitbitToken(null);
-      });
-    }else{
-      console.log("user is null");
-    }
-  }
 
   // This is a demonstration for requesting data scopes
   // Could for fetching should be placed in a separate file.
@@ -57,6 +47,16 @@ const Dashboard = () => {
 
   }, [loading, user]); // The dependency array ensures the effect runs when the access token changes
 
+  const removeUserDevice = () => {
+    if(user){
+      removeDevice(user.uid).then((newUser) => {
+        console.log("newUser", newUser);
+        setFitbitToken(null);
+      });
+    }else{
+      console.log("user is null");
+    }
+  }
   
 
   return (

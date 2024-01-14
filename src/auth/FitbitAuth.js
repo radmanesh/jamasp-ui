@@ -95,7 +95,7 @@ async function removeDevice(userId) {
       // const { fitbitData, ...newUser } = usr;
       // console.log("new", newUser);
 
-      const userRef = doc(db, 'users', 'BJ');
+      const userRef = doc(db, 'users', docRef.id);
       const updaredUesr = await updateDoc(userRef, {fitbitData:deleteField()});
       console.log("new", updaredUesr);
 
@@ -174,6 +174,13 @@ const getFitbitAuthState = async function (userId) {
   }
 }
 
+
+/**
+ * Exchanges the authorization code for tokens.
+ * @param {string} code - The authorization code obtained from the URL query parameters.
+ * @param {string} code_verifier - The code verifier used for the authorization code.
+ * @returns {Promise<any>} - A promise that resolves to the access code.
+ */
 async function exchangeCodeForTokens(code, code_verifier) {
   // Obtain the authorization code from the URL query parameters
   // const code = new URLSearchParams(window.location.search).get('code');
