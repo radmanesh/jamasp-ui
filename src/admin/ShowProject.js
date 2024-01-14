@@ -1,6 +1,5 @@
 import { Alert, Box, Button, Container, LinearProgress, Stack, Tab, Tabs, Typography } from '@mui/material';
 import { Timestamp, doc, onSnapshot, updateDoc } from 'firebase/firestore';
-import PropTypes from 'prop-types';
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { AuthContext } from '../auth/AuthContext';
@@ -9,40 +8,7 @@ import DataSettingsPanel from './DataSettingsPanel';
 import DevicesPanel from './DevicesPanel';
 import SensorsPanel from './SensorsPanel';
 import { fetchFibbitApiData } from '../auth/api';
-
-
-function CustomTabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Container>{children}</Container>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-CustomTabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
-};
-
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-}
+import { CustomTabPanel } from './CustomTabPanel';
 
 /**
  * Renders the ShowProject component.
@@ -61,8 +27,9 @@ const ShowProject = () => {
   const [userSensors, setUserSensors] = useState([]);
   const [userSettings, setUserSettings] = useState({});
   const [alert, setAlert] = useState(null);
-  const user = useContext(AuthContext);
   const [apiResponse, setApiResponse] = useState(null);
+  
+  const user = useContext(AuthContext);
 
   useEffect(() => {
       console.log(user);
@@ -202,8 +169,9 @@ const ShowProject = () => {
    */
   const handleDownload = () => {
     console.log("handleDownload", project);
+    console.log("user", user);
     const result = fetchFibbitApiData({ fitibitToken: user.fitbitData, project: project, updateResponses: setApiResponse });
-    const jsonOutput = handleGenerateJsonDownload(result, `${project.name}-${new Date.now()}.json`);
+    const jsonOutput = handleGenerateJsonDownload(result, `${project.name}-${Date.now()}.json`);
     console.log("jsonOutput: ", jsonOutput);
 
 
@@ -230,6 +198,19 @@ const ShowProject = () => {
     URL.revokeObjectURL(href);
     return;
   };
+
+  /**
+   * Returns the accessibility properties for a tab.
+   *
+   * @param {number} index - The index of the tab.
+   * @returns {Object} - The accessibility properties object.
+   */
+  function a11yProps(index) {
+    return {
+      id: `simple-tab-${index}`,
+      'aria-controls': `simple-tabpanel-${index}`,
+    };
+  }
 
   return (
     <Container maxWidth="lg">

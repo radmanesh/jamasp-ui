@@ -53,6 +53,12 @@ const getProjectEndopoints = (project) => {
 
 const fetchFibbitApiData = ({ fitibitToken, project, updateResponses }) => {
 	console.log({fitibitToken, project});
+	if (!fitibitToken) {
+		console.error('No Fitbit token was provided.');
+		return null;
+	}
+
+	// Create a config object with the access token
 	const config = {
 		headers: { Authorization: `Bearer ${fitibitToken.access_token}` },
 	};

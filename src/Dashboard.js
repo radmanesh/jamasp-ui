@@ -11,7 +11,7 @@ const Dashboard = () => {
 
   const removeUserDevice = () => {
     if(user){
-      removeDevice(user.uid, fitbitToken.user_id).then((newUser) => {
+      removeDevice(user.uid).then((newUser) => {
         console.log("newUser", newUser);
         setFitbitToken(null);
       });
