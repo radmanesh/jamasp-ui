@@ -1,6 +1,6 @@
 import { Button } from '@mui/material';
 import React from 'react';
-import generateFitbitLoginUrl from './FitbitAuth';
+import {generateFitbitLoginUrl} from "./FitbitAuthUtils";
 
 export default function AuthenticationBtn() {
 

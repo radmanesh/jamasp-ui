@@ -46,7 +46,7 @@ const getProjectEndopoints = (project) => {
 }
 
 
-const fetchFibbitApiData = ({ fitibitToken, project, updateResponses }) => {
+const fetchFibbitApiData = async ({ fitibitToken, project, updateResponses }) => {
 	console.log({fitibitToken, project});
 	if (!fitibitToken) {
 		console.error('No Fitbit token was provided.');
@@ -63,18 +63,31 @@ const fetchFibbitApiData = ({ fitibitToken, project, updateResponses }) => {
 		requests.push(axios.get(endpoint, config));
 	});
 
-	axios
-		.all(requests)
-		.then(
-			axios.spread((...responses) => {
-				console.log("responses: ", responses);
-				return responses;
-			})
-		)
-		.catch((errors) => {
-			console.log(errors);
-			return null;
+	// axios
+	// 	.all(requests)
+	// 	.then(
+	// 		axios.spread((...responses) => {
+	// 			console.log("responses: ", responses);
+	// 			return responses;
+	// 		})
+	// 	)
+	// 	.catch((errors) => {
+	// 		console.log(errors.toJSON());
+	// 		return null;
+	// 	});
+	Promise.allSettled(requests).then((results) => {
+		console.log("results: ", results);
+		const data = [];
+		results.forEach((result) => {
+			if (result.status === 'fulfilled') {
+				data.push(result.value.data);
+			}
 		});
+		console.log("data: ", data);
+		updateResponses(data);
+		return data;
+	});
+
 }
 
 /**

@@ -171,10 +171,15 @@ const ShowProject = () => {
     console.log("handleDownload", project, user );
     const fitbitToken = await getFitbitAuthState(user.uid)
     console.log("fitbitToken", fitbitToken);
-    const result = fetchFibbitApiData({ fitibitToken: fitbitToken, project: project, updateResponses: setApiResponse });
-    console.log("result: ", result);
-    const jsonOutput = handleGenerateJsonDownload(result, `${project.name}-${Date.now()}.json`);
-    console.log("jsonOutput: ", jsonOutput);
+    const responses = await fetchFibbitApiData({ fitibitToken: fitbitToken, project: project, updateResponses: setApiResponse });
+    console.log("result: ", responses);
+    responses.forEach(element => {
+      console.log(element);
+      console.log(typeof element);
+    });
+
+    //const jsonOutput = handleGenerateJsonDownload(result, `${project.name}-${Date.now()}.json`);
+    //console.log("jsonOutput: ", jsonOutput);
 
 
   }

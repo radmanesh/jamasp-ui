@@ -1,42 +1,11 @@
 // AuthCallback.js
-import { collection, getDocs, query, serverTimestamp, updateDoc, where } from 'firebase/firestore';
 import React, { useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useNavigate } from 'react-router-dom';
-import { auth, db } from '../firebase';
+import { auth } from '../firebase';
+import { storeFitbitToken } from './FitbitAuthUtils';
 import { getOrRenewAccessToken } from './api';
 
-
-async function storeFitbitToken(userId, token) {  
-  console.log("storeFitbitToken");
-  console.log(userId);
-  console.log(token);
-  if (!token.user_id) {
-    console.log("token.user_id is null");
-    alert("token.user_id is null");
-    return;
-  } else {
-    try {
-      const q = query(collection(db, "users"), where("uid", "==", userId));
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, " => ", doc.data());
-        updateDoc(doc.ref, 
-          {
-            fitbitData: {
-              ...token,
-              timestamp: serverTimestamp()
-            }
-          }
-        );
-      }); 
-    } catch (error) {
-      console.error("Error adding document: ", error);
-      // Handle error
-    }
-  }
-}
 
 export default function OAuthCallback() {
   const [user, loading] = useAuthState(auth);
