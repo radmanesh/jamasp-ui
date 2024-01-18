@@ -171,11 +171,11 @@ const ShowProject = () => {
    */
   const handleDownload = async () => {
     console.log("handleDownload", project, user );
-    const ownerUserId = await getUserIdByFitbitId('BPCPPB');
-    console.log("ownerUserId", ownerUserId);
-    const fitbitToken = await getFitbitAuthState(ownerUserId);
-    console.log("fitbitToken", fitbitToken);
-    const responses = await fetchFibbitApiData({ fitibitToken: fitbitToken, project: project, updateResponses: setApiResponse });
+    // const ownerUserId = await getUserIdByFitbitId('BPCPPB');
+    // console.log("ownerUserId", ownerUserId);
+    // const fitbitToken = await getFitbitAuthState(ownerUserId);
+    // console.log("fitbitToken", fitbitToken);
+    const responses = await fetchFibbitApiData({  project: project, updateResponses: setApiResponse });
     console.log("result: ", responses);
     if(responses){
       responses.forEach(element => {

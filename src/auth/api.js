@@ -12,6 +12,8 @@
 import axios from 'axios';
 import { sensors as sensorsList } from '../admin/sensors';
 import moment from 'moment';
+import { getUserIdByFitbitId } from './FitbitAuthUtils';
+import { getFitbitAuthState } from './FitbitAuth';
 
 const serviceBaseUrl = 'https://fitbit-oauth-service-rxexpcoyba-ue.a.run.app/'
 const getTokenUrl = serviceBaseUrl + 'getToken'; //'http://getFitbitToken-jw3n47gu5q-uc.a.run.app';
@@ -74,31 +76,38 @@ const generateAxiosConfig = (fitibitToken, sensor) => {
 	return config;
 }
 
-const fetchFibbitApiData = async ({ fitibitToken, project, updateResponses }) => {
-	console.log({fitibitToken, project});
-	if (!fitibitToken) {
+const fetchFibbitApiData = async ( {project, updateResponses }) => {
+	//console.log({fitibitToken, project});
+	if (!project ) {
 		console.error('No Fitbit token was provided.');
 		return null;
 	}
 
-	const apiEndpoints = getProjectEndopoints(project , fitibitToken);
+	const apiEndpoints = [];
+	for (const device of project.devices) {
+		const deviceGoogleUserId = await getUserIdByFitbitId(device);
+		console.log("deviceGoogleUserId: ", deviceGoogleUserId);
+		const fitbitToken = await getFitbitAuthState(deviceGoogleUserId);
+		console.log("fitbitToken: ", fitbitToken);
+		const selectedSensors = sensorsList.filter((item) => project.sensors.includes(item.id));
+		console.log("selectedSensors: ", selectedSensors);
+		selectedSensors.forEach((sensor) => {
+			const apiEndpoint = { 
+				endpointUrl: generateAPIEndpoint(sensor, { 'user-id': device, 'start-date': project.settings.dateRange.from, 'end-date': project.settings.dateRange.to, 'detail-level': project.settings.detailLevel }),
+				axiosConfig: generateAxiosConfig(fitbitToken, sensor) 
+			};
+			apiEndpoints.push(apiEndpoint);
+		});		
+	}
+	console.log("apiEndpoints: ", apiEndpoints);
+
+	//const apiEndpoints = getProjectEndopoints(project , fitibitToken);
 	const requests = [];
 	apiEndpoints.forEach((endpoint) => {
 		requests.push(axios.get(endpoint.endpointUrl, endpoint.axiosConfig));
 	});
 
-	// axios
-	// 	.all(requests)
-	// 	.then(
-	// 		axios.spread((...responses) => {
-	// 			console.log("responses: ", responses);
-	// 			return responses;
-	// 		})
-	// 	)
-	// 	.catch((errors) => {
-	// 		console.log(errors.toJSON());
-	// 		return null;
-	// 	});
+	// Use Promise.allSettled to make sure all requests are completed
 	Promise.allSettled(requests).then((results) => {
 		console.log("results: ", results);
 		const data = [];
