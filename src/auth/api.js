@@ -18,33 +18,61 @@ const getTokenUrl = serviceBaseUrl + 'getToken'; //'http://getFitbitToken-jw3n47
 const refershTokenUrl = serviceBaseUrl + 'refreshToken'; //'https://refreshFitbitToken-jw3n47gu5q-uc.a.run.app';
 const fitbitApiBaseUrl = 'https://api.fitbit.com';
 
+/**
+ * Generates an API endpoint URL based on the given sensor and parameters.
+ * @param {Object} sensor - The sensor object containing information about the API endpoint.
+ * @param {Object} parameters - The parameters to be included in the API endpoint URL.
+ * @returns {string} The generated API endpoint URL.
+ */
 const generateAPIEndpoint = (sensor, parameters) => {
 	let apiParams = Object.assign({}, ...sensor.arguments.map((arg, index) => {
 		let value = parameters[arg] ? parameters[arg] : sensor.defaultValues[index];
 		if ((arg === 'start-date' || arg === 'end-date') && value.toDate) {
-			value = moment(value.toDate()).format('MM-DD-YYYY');
+			value = moment(value.toDate()).format('YYYY-MM-DD');
 		}
 		return { [arg]: value };
 	}));
-	console.log("apiParams: ", apiParams);
+	//console.log("apiParams: ", apiParams);
 
-	const newStr = fitbitApiBaseUrl + sensor.link.replace(/\[(.*?)\]/g, (match, p1) => apiParams[p1]);
-	console.log("result", newStr);
-	return newStr;
+	const endpointUrl = fitbitApiBaseUrl + sensor.link.replace(/\[(.*?)\]/g, (match, p1) => apiParams[p1]);
+	//console.log("result", endpointUrl);
+	
+	return endpointUrl;
 }
 
-const getProjectEndopoints = (project) => {
+/**
+ * Retrieves the API endpoints for a given project.
+ * @param {Object} project - The project object.
+ * @returns {Array} - An array of API endpoints.
+ */
+const getProjectEndopoints = (project, fitbitToken) => {
 	const apiEndpoints = [];
 	project.devices.forEach((device) => {
 		const selectedSensors = sensorsList.filter((item) => project.sensors.includes(item.id));
 		console.log("selectedSensors: ", selectedSensors);
 		selectedSensors.forEach((sensor) => {
-			apiEndpoints.push(generateAPIEndpoint(sensor, { 'user-id': device, 'start-date': project.settings.dateRange.from, 'end-date': project.settings.dateRange.to, 'detail-level': project.settings.detailLevel }));
+			const apiEndpoint = { 
+				endpointUrl: generateAPIEndpoint(sensor, { 'user-id': device, 'start-date': project.settings.dateRange.from, 'end-date': project.settings.dateRange.to, 'detail-level': project.settings.detailLevel }),
+				axiosConfig: generateAxiosConfig(fitbitToken, sensor) 
+			};
+			apiEndpoints.push(apiEndpoint);
 		});
 	});
 	return apiEndpoints;
 }
 
+const generateAxiosConfig = (fitibitToken, sensor) => {
+	const config = {
+		headers: { Authorization: `Bearer ${fitibitToken.access_token}` },
+	};
+	if(sensor.parameters){
+		sensor.parameters.forEach((param) => {
+			config.params = {...config.params, ...param};
+		});
+	}
+	console.log("config: ", config);
+	return config;
+}
 
 const fetchFibbitApiData = async ({ fitibitToken, project, updateResponses }) => {
 	console.log({fitibitToken, project});
@@ -53,14 +81,10 @@ const fetchFibbitApiData = async ({ fitibitToken, project, updateResponses }) =>
 		return null;
 	}
 
-	// Create a config object with the access token
-	const config = {
-		headers: { Authorization: `Bearer ${fitibitToken.access_token}` },
-	};
-	const apiEndpoints = getProjectEndopoints(project);
+	const apiEndpoints = getProjectEndopoints(project , fitibitToken);
 	const requests = [];
 	apiEndpoints.forEach((endpoint) => {
-		requests.push(axios.get(endpoint, config));
+		requests.push(axios.get(endpoint.endpointUrl, endpoint.axiosConfig));
 	});
 
 	// axios

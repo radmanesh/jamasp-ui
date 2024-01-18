@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Container, LinearProgress, Stack, Tab, Tabs, Typography } from '@mui/material';
+import { Alert, Box, Button, Container, LinearProgress, Paper, Stack, Tab, Tabs, Typography } from '@mui/material';
 import { Timestamp, doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -10,6 +10,7 @@ import SensorsPanel from './SensorsPanel';
 import { fetchFibbitApiData } from '../auth/api';
 import { CustomTabPanel } from './CustomTabPanel';
 import { getFitbitAuthState } from '../auth/FitbitAuth';
+import { getUserIdByFitbitId } from '../auth/FitbitAuthUtils';
 
 /**
  * Renders the ShowProject component.
@@ -33,9 +34,10 @@ const ShowProject = () => {
   const user = useContext(AuthContext);
 
   useEffect(() => {
-      console.log(user);
-    }, []
+      console.log("Api responses: ",apiResponse);
+    } , [apiResponse]
   );
+
 
   /**
    * Handles the user devices input.
@@ -169,14 +171,18 @@ const ShowProject = () => {
    */
   const handleDownload = async () => {
     console.log("handleDownload", project, user );
-    const fitbitToken = await getFitbitAuthState(user.uid)
+    const ownerUserId = await getUserIdByFitbitId('BPCPPB');
+    console.log("ownerUserId", ownerUserId);
+    const fitbitToken = await getFitbitAuthState(ownerUserId);
     console.log("fitbitToken", fitbitToken);
     const responses = await fetchFibbitApiData({ fitibitToken: fitbitToken, project: project, updateResponses: setApiResponse });
     console.log("result: ", responses);
-    responses.forEach(element => {
-      console.log(element);
-      console.log(typeof element);
-    });
+    if(responses){
+      responses.forEach(element => {
+        console.log(element);
+        console.log(typeof element);
+      });
+    }
 
     //const jsonOutput = handleGenerateJsonDownload(result, `${project.name}-${Date.now()}.json`);
     //console.log("jsonOutput: ", jsonOutput);
@@ -242,6 +248,12 @@ const ShowProject = () => {
       <CustomTabPanel value={tabValue} index={2}>
         <DataSettingsPanel project={project} onDateChange={handleDateChange} onUserInput={handleUserSettingsInput} userSettings={userSettings} />
       </CustomTabPanel>
+
+      {apiResponse && <Paper elevation={3} sx={{ p: 2, mb: 2 }}>
+        <Typography variant="h6">API Responses</Typography>
+        <pre>Number of responses: {apiResponse.length}</pre>
+        <Button variant="contained" color="secondary" onClick={() => handleGenerateJsonDownload(apiResponse, `${project.name}-${Date.now()}`)}>Download</Button>
+      </Paper>}
 
       <Stack direction="row" spacing={2} justifyContent="space-between" sx={{ pt: 2 }}>
         <Button variant="contained" color="primary" onClick={handleSaveProject}>Save</Button>

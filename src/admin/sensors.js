@@ -7,10 +7,19 @@ const sensors = [
     link: "/1/user/[user-id]/activities/active-zone-minutes/date/[start-date]/[end-date]/[detail-level].json",
     description: "The number of minutes spent in each activity zone during the given day. The response includes activity log entries for the specified day.",
     arguments: ['user-id', 'start-date', 'end-date', 'detail-level'],
-    defaultValues: ['-', '2023-10-01', '2024-01-01', '1min'],
+    defaultValues: ['-', '2024-01-01', '2024-01-01', '1min'],
     parameters: [
-      { 'timezone': 'America/Los_Angeles' }
+      { 'timezone': 'UTC' }
     ]
+  },
+  {
+    id: "AZM_Intraday_byDate",
+    label: "AZM Intraday by Date",
+    link: "/1/user/[user-id]/activities/active-zone-minutes/date/[start-date]/1d/[detail-level].json",
+    description: "The number of minutes spent in each activity zone during the given day. The response includes activity log entries for the specified day.",
+    arguments: ['user-id', 'start-date', 'detail-level'],
+    defaultValues: ['-', '2024-01-01', '1min'],
+    parameters: []
   },
   {
     id: "Activity_Intraday",
@@ -18,7 +27,18 @@ const sensors = [
     link: "/1/user/[user-id]/activities/[resource]/date/[start-date]/[end-date]/[detail-level].json",
     description: "retrieves the activity intraday time series data for a given resource on a specific date range for a 24 hour period.",
     arguments: ['user-id', 'resource', 'start-date', 'end-date', 'detail-level'],
-    defaultValues: ['-', ['calories' , 'distance', 'elevation', 'floors', 'steps'] ,'2023-10-01', '2024-01-01', '1min'],
+    defaultValues: ['-', 'steps' ,'2024-01-01', '2024-01-01', '1min'],
+    //defaultValues: ['-', ['calories' , 'distance', 'elevation', 'floors', 'steps'] ,'2023-12-10', '2024-01-01', '1min'],
+    parameters: []
+  },  
+  {
+    id: "Activity_Intraday_byDate",
+    label: "Activity Time Series Intraday By Date",
+    link: "/1/user/[user-id]/activities/[resource]/date/[start-date]/1d/[detail-level].json",
+    description: "retrieves the activity intraday time series data for a given resource on a specific date range for a 24 hour period.",
+    arguments: ['user-id', 'resource', 'start-date', 'detail-level'],
+    defaultValues: ['-', 'steps' ,'2024-01-01', '1min'],
+    //defaultValues: ['-', ['calories' , 'distance', 'elevation', 'floors', 'steps'] ,'2023-12-10', '2024-01-01', '1min'],
     parameters: []
   },
   {
@@ -27,44 +47,44 @@ const sensors = [
     link: "/1/user/[user-id]/br/date/[start-date]/[end-date]/all.json",
     description: "retrieves a summary and list of a user's heart rate and step activities for a given day.",
     arguments: ['user-id', 'start-date', 'end-date'],
-    defaultValues: ['-', '2023-10-01', '2024-01-01'],
+    defaultValues: ['-', '2023-12-05', '2024-01-01'],
     parameters: []
   },
   {
     id: "HeartRate_Intraday",
     label: "Heart Rate Intraday",
-    link: "/1/user/[user-id]/activities/heart/date/[start-date]/[end-date]/[detail-level].json",
+    link: "/1/user/[user-id]/activities/heart/date/[start-date]/1d/[detail-level].json",
     description: "retrieves a summary and list of a user's heart rate and step activities for a given day.",
-    arguments: ['user-id', 'start-date', 'end-date', 'detail-level'],
-    defaultValues: ['-', '2023-10-01', '2024-01-01', '1min'],
+    arguments: ['user-id', 'start-date', 'detail-level'],
+    defaultValues: ['-', '2024-01-01', '1min'],
     parameters: [{
-      'timezone': 'America/Los_Angeles'
+      'timezone': 'UTC'
     }]
   },
   {
     id: "HRV_Intraday",
     label: "HRV Intraday",
-    link: "/1/user/[user-id]/hrv/date/[startDate]/[endDate]/all.json",
+    link: "/1/user/[user-id]/hrv/date/[start-date]/all.json",
     description: "retrieves a summary and list of a user's heart rate and step activities for a given day.",
-    arguments: ['user-id', 'startDate', 'endDate'],
-    defaultValues: ['-', '2023-10-01', '2024-01-01'],
+    arguments: ['user-id', 'start-date'],
+    defaultValues: ['-', '2024-01-01'],
     parameters: []
   },
   {
     id: "SpO2_Intraday",
     label: "SpO2 Intraday",
-    link: "/1/user/[user-id]/spo2/date/[start-date]/[end-date]/all.json",
+    link: "/1/user/[user-id]/spo2/date/[start-date]/all.json",
     description: "pO2 intraday data for a specified date range. SpO2 applies specifically to a user’s “main sleep”, which is the longest single period of time asleep on a given date. Spo2 values are calculated on a 5-minute exponentially-moving average.",
-    arguments: ['user-id', 'start-date', 'end-date'],
-    defaultValues: ['-', '2023-10-01', '2024-01-01'],
+    arguments: ['user-id', 'start-date',],
+    defaultValues: ['-', '2024-01-01'],
     parameters: []
   },
   {
     id: "Sleep_Log",
     label: "Sleep Log by Date Range",
-    link: "/1.2/user/[user-id]/sleep/date/[startDate]/[endDate].json",
+    link: "/1.2/user/[user-id]/sleep/date/[start-date]/[end-date].json",
     description: "returns a list of a user's sleep log entries for a date range. The data returned for either date can include a sleep period that ended that date but began on the previous date.",
-    arguments: ['user-id', 'startDate', 'endDate'],
+    arguments: ['user-id', 'start-date', 'end-date'],
     defaultValues: ['-', '2023-10-01', '2024-01-01'],
     parameters: []
   },
@@ -112,7 +132,7 @@ const sensors = [
       { 'beforeDate': '2024-01-01' },
       {'sort': 'desc'},
       {'offset': 0},
-      {'limit': 100}
+      {'limit': 10}
     ]
   },
   {

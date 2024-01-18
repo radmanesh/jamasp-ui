@@ -137,3 +137,31 @@ export async function generateFitbitLoginUrl() {
 
 }
 
+/** 
+ * Returns the Fitbit token for a user.
+ * 
+ * @param {string} userId - The ID of the user.
+ * @returns {object} - The Fitbit token for the user.
+ */
+const getUserIdByFitbitId = async (fitbitUserId) => {
+	try {
+		const q = query(collection(db, "users"), where("fitbitData.user_id", "==", fitbitUserId));
+		const querySnapshot = await getDocs(q);
+		var docRef;
+		if (querySnapshot.size === 0) {
+			// the user has nev
+			console.log("No such document!");
+			return null;
+		} else {
+			docRef = querySnapshot.docs[0];
+		}
+    const userId = docRef.data().uid;
+    console.log("userId: ", userId);
+    return userId;
+	} catch (e) {
+		console.error("Error adding document: ", e);
+		return null;
+	}
+};
+
+export { getUserIdByFitbitId };
