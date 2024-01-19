@@ -153,11 +153,4 @@ const sensors = [
   }
 ];
 
-const generateAPIEndpoint = (sensor, argValues) => {
-  let apiParams = sensor.arguments.map( (arg, index) => ( { [arg]: argValues[arg] ? argValues[arg] : sensor.defaultValues[index] }) );
-	//let apiEndpoint = sensor.link.replace(/\[(.*?)\]/g, (match, p1) => parameters[p1]);
-}
-
-
-
 export { sensors };
