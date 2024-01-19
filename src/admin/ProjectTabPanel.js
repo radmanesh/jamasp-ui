@@ -12,7 +12,7 @@ import React from 'react';
  * @param {Object} props.other - Additional props to be spread on the root element.
  * @returns {JSX.Element} The rendered CustomTabPanel component.
  */
-export function CustomTabPanel(props) {
+export function ProjectTabPanel(props) {
   const { children, value, index, ...other } = props;
 
   return (
@@ -31,7 +31,7 @@ export function CustomTabPanel(props) {
     </div>
   );
 }
-CustomTabPanel.propTypes = {
+ProjectTabPanel.propTypes = {
   children: PropTypes.node,
   index: PropTypes.number.isRequired,
   value: PropTypes.number.isRequired,

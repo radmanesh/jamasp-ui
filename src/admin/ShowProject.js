@@ -8,9 +8,10 @@ import DataSettingsPanel from './DataSettingsPanel';
 import DevicesPanel from './DevicesPanel';
 import SensorsPanel from './SensorsPanel';
 import { fetchFibbitApiData } from '../auth/api';
-import { CustomTabPanel } from './CustomTabPanel';
+import { ProjectTabPanel } from './ProjectTabPanel';
 import { getFitbitAuthState } from '../auth/FitbitAuth';
 import { getUserIdByFitbitId } from '../auth/FitbitAuthUtils';
+import DownloadPanel from './DownloadPanel';
 
 /**
  * Renders the ShowProject component.
@@ -237,17 +238,21 @@ const ShowProject = () => {
           <Tab label="Devices" {...a11yProps(0)} />
           <Tab label="Sensors" {...a11yProps(1)} />
           <Tab label="Settings" {...a11yProps(2)} />
+          <Tab label="Download" {...a11yProps(3)} />
         </Tabs>
       </Box>
-      <CustomTabPanel value={tabValue} index={0}>
+      <ProjectTabPanel value={tabValue} index={0}>
         <DevicesPanel project={project} onUserInput={handleUserDevicesInput} userDevices={userDevices} />
-      </CustomTabPanel>
-      <CustomTabPanel value={tabValue} index={1}>
+      </ProjectTabPanel>
+      <ProjectTabPanel value={tabValue} index={1}>
         <SensorsPanel project={project} onUserInput={handleUserSensorsInput} userSensors={userSensors} />
-      </CustomTabPanel>
-      <CustomTabPanel value={tabValue} index={2}>
+      </ProjectTabPanel>
+      <ProjectTabPanel value={tabValue} index={2}>
         <DataSettingsPanel project={project} onDateChange={handleDateChange} onUserInput={handleUserSettingsInput} userSettings={userSettings} />
-      </CustomTabPanel>
+      </ProjectTabPanel>
+      <ProjectTabPanel value={tabValue} index={3}>
+        <DownloadPanel project={project} onUserInput={handleUserSensorsInput} userSensors={userSensors} />
+      </ProjectTabPanel>
 
       {apiResponse && <Paper elevation={3} sx={{ p: 2, mb: 2 }}>
         <Typography variant="h6">API Responses</Typography>

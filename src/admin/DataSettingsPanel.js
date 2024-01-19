@@ -7,7 +7,7 @@ import DetailLevelSelect from './components/DetailLevelSelect';
 
 function DataSettingsPanel(props) {
   const { project, onUserInput, userSettings, onDateChange } = props;
-  console.log('from', userSettings.dateRange.from, userSettings.dateRange.from instanceof Timestamp,userSettings.dateRange.from.toDate(), userSettings.dateRange.from.toDate() instanceof Date);
+  //console.log('from', userSettings.dateRange.from, userSettings.dateRange.from instanceof Timestamp,userSettings.dateRange.from.toDate(), userSettings.dateRange.from.toDate() instanceof Date);
   let fromDayjs = dayjs(userSettings.dateRange.from.toDate());
   let toDayjs = dayjs(userSettings.dateRange.to.toDate());
 
