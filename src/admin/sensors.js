@@ -1,5 +1,3 @@
-import React from 'react';
-
 const sensors = [
   {
     id: "AZM_Intraday",

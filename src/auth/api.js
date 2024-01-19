@@ -26,6 +26,12 @@ const fitbitApiBaseUrl = 'https://api.fitbit.com';
  * @param {Object} parameters - The parameters to be included in the API endpoint URL.
  * @returns {string} The generated API endpoint URL.
  */
+/**
+ * Generates an API endpoint URL based on the given sensor and parameters.
+ * @param {Object} sensor - The sensor object containing information about the API endpoint.
+ * @param {Object} parameters - The parameters to be included in the API endpoint URL.
+ * @returns {string} The generated API endpoint URL.
+ */
 const generateAPIEndpoint = (sensor, parameters) => {
 	let apiParams = Object.assign({}, ...sensor.arguments.map((arg, index) => {
 		let value = parameters[arg] ? parameters[arg] : sensor.defaultValues[index];
@@ -43,26 +49,11 @@ const generateAPIEndpoint = (sensor, parameters) => {
 }
 
 /**
- * Retrieves the API endpoints for a given project.
- * @param {Object} project - The project object.
- * @returns {Array} - An array of API endpoints.
+ * Generates an Axios configuration object for making API requests.
+ * @param {Object} fitibitToken - The Fitbit access token.
+ * @param {Object} sensor - The sensor object.
+ * @returns {Object} The Axios configuration object.
  */
-const getProjectEndopoints = (project, fitbitToken) => {
-	const apiEndpoints = [];
-	project.devices.forEach((device) => {
-		const selectedSensors = sensorsList.filter((item) => project.sensors.includes(item.id));
-		console.log("selectedSensors: ", selectedSensors);
-		selectedSensors.forEach((sensor) => {
-			const apiEndpoint = { 
-				endpointUrl: generateAPIEndpoint(sensor, { 'user-id': device, 'start-date': project.settings.dateRange.from, 'end-date': project.settings.dateRange.to, 'detail-level': project.settings.detailLevel }),
-				axiosConfig: generateAxiosConfig(fitbitToken, sensor) 
-			};
-			apiEndpoints.push(apiEndpoint);
-		});
-	});
-	return apiEndpoints;
-}
-
 const generateAxiosConfig = (fitibitToken, sensor) => {
 	const config = {
 		headers: { Authorization: `Bearer ${fitibitToken.access_token}` },
@@ -76,6 +67,13 @@ const generateAxiosConfig = (fitibitToken, sensor) => {
 	return config;
 }
 
+/**
+ * Fetches data from the Fitbit API for a given project.
+ * @param {Object} options - The options for fetching the data.
+ * @param {Object} options.project - The project object containing information about the project.
+ * @param {Function} options.updateResponses - The function to update the responses with the fetched data.
+ * @returns {Promise<Array>} - A promise that resolves to an array of fetched data.
+ */
 const fetchFibbitApiData = async ( {project, updateResponses }) => {
 	//console.log({fitibitToken, project});
 	if (!project ) {
@@ -111,11 +109,25 @@ const fetchFibbitApiData = async ( {project, updateResponses }) => {
 	Promise.allSettled(requests).then((results) => {
 		console.log("results: ", results);
 		const data = [];
+		let rateLimit = {};
 		results.forEach((result) => {
 			if (result.status === 'fulfilled') {
+				// get Fitbit-Rate-Limit-Limit from response headers
+				try {
+					rateLimit = {
+						rateLimit: result.value.headers['Fitbit-Rate-Limit-Limit'],
+						rateLimitRemaining: result.value.headers['Fitbit-Rate-Limit-Remaining'],
+						rateLimitReset: result.value.headers['Fitbit-Rate-Limit-Reset']
+					};					
+				} catch (error) {
+					console.log("error: ", error);
+					console.log("result.value.headers: ", result.value.headers);
+				}
 				data.push(result.value.data);
 			}
 		});
+		// save rate limit to firestore
+		console.log("rateLimit: ", rateLimit);
 		console.log("data: ", data);
 		updateResponses(data);
 		return data;
