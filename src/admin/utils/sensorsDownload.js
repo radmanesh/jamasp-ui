@@ -8,10 +8,10 @@ const downloadSensors = [
       { name: 'user-id', type: 'text', defaultValue: '-' },
       { name: 'start-date', type: 'date', defaultValue: '2024-01-01' },
       { name: 'end-date', type: 'date', defaultValue: '2024-01-01' },
-      { name: 'detail-level', type: 'select', values: ['1min','5min','15min'] , defaultValue: '1min' }
+      { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '1min' }
     ],
     parameters: [
-      { name:'timezone', type:'select', values: ['UTC'], defaultValue: 'UTC' }
+      { name: 'timezone', type: 'select', values: ['UTC'], defaultValue: 'UTC' }
     ]
   },
   {
@@ -22,7 +22,7 @@ const downloadSensors = [
     arguments: [
       { name: 'user-id', type: 'text', defaultValue: '-' },
       { name: 'start-date', type: 'date', defaultValue: '2024-01-01' },
-      { name: 'detail-level', type: 'select', values: ['1min','5min','15min'] , defaultValue: '1min' }
+      { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '1min' }
     ],
     parameters: []
   },
@@ -35,7 +35,7 @@ const downloadSensors = [
       { name: 'user-id', type: 'text', defaultValue: '-' },
       { name: 'start-date', type: 'date', defaultValue: '2024-01-01' },
       { name: 'end-date', type: 'date', defaultValue: '2024-01-01' },
-      { name: 'detail-level', type: 'select', values: ['1min','5min','15min'] , defaultValue: '1min' }
+      { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '1min' }
     ],
     //defaultValues: ['-', ['calories' , 'distance', 'elevation', 'floors', 'steps'] ,'2023-12-10', '2024-01-01', '1min'],
     parameters: []
@@ -48,8 +48,8 @@ const downloadSensors = [
     arguments: [
       { name: 'user-id', type: 'text', defaultValue: '-' },
       { name: 'start-date', type: 'date', defaultValue: '2024-01-01' },
-      { name: 'detail-level', type: 'select', values: ['1min','5min','15min'] , defaultValue: '1min' }
-    ],    
+      { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '1min' }
+    ],
     //defaultValues: ['-', ['calories' , 'distance', 'elevation', 'floors', 'steps'] ,'2023-12-10', '2024-01-01', '1min'],
     parameters: []
   },
@@ -61,8 +61,8 @@ const downloadSensors = [
     arguments: [
       { name: 'user-id', type: 'text', defaultValue: '-' },
       { name: 'start-date', type: 'date', defaultValue: '2024-01-01' },
-      { name: 'detail-level', type: 'select', values: ['1min','5min','15min'] , defaultValue: '1min' }
-    ],    
+      { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '1min' }
+    ],
     //defaultValues: ['-', ['calories' , 'distance', 'elevation', 'floors', 'steps'] ,'2023-12-10', '2024-01-01', '1min'],
     parameters: []
   },
@@ -74,8 +74,8 @@ const downloadSensors = [
     arguments: [
       { name: 'user-id', type: 'text', defaultValue: '-' },
       { name: 'start-date', type: 'date', defaultValue: '2024-01-01' },
-      { name: 'detail-level', type: 'select', values: ['1min','5min','15min'] , defaultValue: '1min' }
-    ],    
+      { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '1min' }
+    ],
     //defaultValues: ['-', ['calories' , 'distance', 'elevation', 'floors', 'steps'] ,'2023-12-10', '2024-01-01', '1min'],
     parameters: []
   },
@@ -87,8 +87,8 @@ const downloadSensors = [
     arguments: [
       { name: 'user-id', type: 'text', defaultValue: '-' },
       { name: 'start-date', type: 'date', defaultValue: '2024-01-01' },
-      { name: 'detail-level', type: 'select', values: ['1min','5min','15min'] , defaultValue: '1min' }
-    ],    
+      { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '1min' }
+    ],
     //defaultValues: ['-', ['calories' , 'distance', 'elevation', 'floors', 'steps'] ,'2023-12-10', '2024-01-01', '1min'],
     parameters: []
   },
@@ -100,8 +100,8 @@ const downloadSensors = [
     arguments: [
       { name: 'user-id', type: 'text', defaultValue: '-' },
       { name: 'start-date', type: 'date', defaultValue: '2024-01-01' },
-      { name: 'detail-level', type: 'select', values: ['1min','5min','15min'] , defaultValue: '1min' }
-    ],    
+      { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '1min' }
+    ],
     //defaultValues: ['-', ['calories' , 'distance', 'elevation', 'floors', 'steps'] ,'2023-12-10', '2024-01-01', '1min'],
     parameters: []
   },
@@ -125,10 +125,10 @@ const downloadSensors = [
     arguments: [
       { name: 'user-id', type: 'text', defaultValue: '-' },
       { name: 'start-date', type: 'date', defaultValue: '2024-01-01' },
-      { name: 'detail-level', type: 'select', values: ['1min','5min','15min'] , defaultValue: '1min' }
+      { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '1min' }
     ],
     parameters: [
-      { name:'timezone', type:'select', values: ['UTC'], defaultValue: 'UTC' }
+      { name: 'timezone', type: 'select', values: ['UTC'], defaultValue: 'UTC' }
     ]
   },
   {
@@ -175,10 +175,10 @@ const downloadSensors = [
     ],
     //parameters: ['beforeDate', 'afterDate', 'sort', 'offset', 'limit']
     parameters: [
-      { name:'beforeDate', type:'date', defaultValue: '2024-01-01' },
-      { name:'sort' , type:'hidden', defaultValue:'desc'},
-      {name:'offset' , type:'number', defaultValue: 0},
-      {name:'limit', type:'number', defaultValue: 100}
+      { name: 'beforeDate', type: 'date', defaultValue: '2024-01-01' },
+      { name: 'sort', type: 'hidden', defaultValue: 'desc' },
+      { name: 'offset', type: 'number', defaultValue: 0 },
+      { name: 'limit', type: 'number', defaultValue: 100 }
     ]
   },
   {
@@ -191,10 +191,10 @@ const downloadSensors = [
     ],
     //parameters: ['beforeDate', 'afterDate', 'sort', 'offset', 'limit']
     parameters: [
-      { name:'beforeDate', type:'date', defaultValue: '2024-01-01' },
-      { name:'sort' , type:'hidden', defaultValue:'desc'},
-      {name:'offset' , type:'number', defaultValue: 0},
-      {name:'limit', type:'number', defaultValue: 100}
+      { name: 'beforeDate', type: 'date', defaultValue: '2024-01-01' },
+      { name: 'sort', type: 'hidden', defaultValue: 'desc' },
+      { name: 'offset', type: 'number', defaultValue: 0 },
+      { name: 'limit', type: 'number', defaultValue: 100 }
     ]
   },
   {
@@ -219,10 +219,10 @@ const downloadSensors = [
     ],
     //parameters: ['beforeDate', 'afterDate', 'sort', 'offset', 'limit']
     parameters: [
-      { name:'beforeDate', type:'date', defaultValue: '2024-01-01' },
-      { name:'sort' , type:'hidden', defaultValue:'desc'},
-      {name:'offset' , type:'number', defaultValue: 0},
-      {name:'limit', type:'number', defaultValue: 100}
+      { name: 'beforeDate', type: 'date', defaultValue: '2024-01-01' },
+      { name: 'sort', type: 'hidden', defaultValue: 'desc' },
+      { name: 'offset', type: 'number', defaultValue: 0 },
+      { name: 'limit', type: 'number', defaultValue: 100 }
     ]
   },
   {
