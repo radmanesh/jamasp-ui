@@ -26,24 +26,24 @@ function DataSettingsPanel(props) {
     >
       <FormGroup>
         <FormControl>
-        <FormControlLabel
+          <FormControlLabel
             control={
               <DetailLevelSelect detailLevel={userSettings.detailLevel} onUserInput={onUserInput} />
             }
-            label="" 
+            label=""
           />
         </FormControl>
       </FormGroup>
 
-      
+
       <Stack direction="row" spacing={2} justifyContent="space-evenly" sx={{ p: 1 }}>
         <DateTimePicker label="From" defaultValue={new Date(2023, 12, 1)} value={fromDayjs} onChange={(val) => onDateChange('from', Timestamp.fromDate(val.toDate()))} />
         <DateTimePicker label="To" defaultValue={new Date(2024, 1, 1)} value={toDayjs} onChange={(val) => onDateChange('to', Timestamp.fromDate(val.toDate()))} />
       </Stack>
-      
+
       <FormGroup>
         <FormControl>
-        <FormControlLabel
+          <FormControlLabel
             control={
               <Checkbox checked={userSettings.enabled} onChange={(e) => onUserInput('enabled', e.target.checked)} name="enabled" />
             }

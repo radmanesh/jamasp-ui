@@ -1,7 +1,7 @@
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Navigate, Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Dashboard from "./Dashboard";
-import AdminDashboard from "./admin/Dashboard";
+import AdminDashboard from "./admin/AdminDashboard";
 import NewProject from "./admin/NewProject";
 import ShowProject from "./admin/ShowProject";
 import { AuthContext } from './auth/AuthContext';

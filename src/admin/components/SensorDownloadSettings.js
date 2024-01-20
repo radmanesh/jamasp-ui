@@ -1,59 +1,81 @@
-import React from "react";
-import { Box, Typography, List, ListItem, TextField } from "@mui/material";
+import { Box, Button, Checkbox, FormControl, FormControlLabel, IconButton, MenuItem, Stack, TextField, Tooltip, Typography } from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
+import React, { Fragment } from "react";
 
-function SensorDownloadSettings({ sensor, sensorSettings, project }) {
+function SettingItem({ item, index, sensor, handleChange, itemSetting, settingType }) {
+  if (item.name === 'user-id') return (<></>)
   return (
-    <Box>
-      <Typography variant="h4">{sensor.label}</Typography>
-      <Typography variant="caption">{sensor.description}</Typography>
-      <Typography variant="h6" >Arguments:</Typography>
-      <List>
-        {sensor.arguments.map((arg, index) => (
-          <ListItem key={'arg-'+index}>
-            {arg.type === 'text' && (
-              <TextField type="text" label={arg.name} value={arg.defaultValue} />
-            )}
-            {arg.type === 'number' && (
-              <TextField type={arg.type} label={arg.description} defaultValue={arg.defaultValue} />
-            )}
-            <TextField type={arg.type} label={arg.id} defaultValue={arg.defaultValue} />
-          </ListItem>
-        ))}
-      </List>
-      {sensor.parameters.length > 0 && (
-        <>
-        <br />
-        <Typography variant="h6">Parameters:</Typography>
-        <List>
-          {sensor.parameters.map((param, index) => (
-            <ListItem key={'param-'+index}>
-              {param.type === 'select' && (
-                <TextField select label={param.name} defaultValue={param.defaultValue}>
-                  {param.values.map((val, index) => (
-                    <option key={index} value={val.defaultValue}>{val.name}</option>
-                  ))}
-                </TextField>
-              )}
-              {param.type === 'boolean' && (
-                <TextField select label={param.name} defaultValue={param.defaultValue}>
-                  <option key={0} value={true}>true</option>
-                  <option key={1} value={false}>false</option>
-                </TextField>
-              )}
-              {param.type === 'text' && (
-                <TextField type="text" label={param.description} defaultValue={param.defaultValue} />
-              )}
-              {param.type === 'number' && (
-                <TextField type="number" label={param.description} defaultValue={param.defaultValue} />
-              )}
-            </ListItem>
+    <div>
+      {item.type === 'text' && (
+        <TextField type="text" name={item.name} label={item.name} value={itemSetting ? itemSetting : item.defaultValue} onChange={(e) => handleChange(e, sensor, settingType)} />
+      )}
+      {item.type === 'number' && (
+        <TextField type="number" name={item.name} label={item.name} value={itemSetting ? itemSetting : item.defaultValue} onChange={(e) => handleChange(e, sensor, settingType)} />
+      )}
+      {item.type === 'date' && (
+        <TextField type="date" name={item.name} label={item.name} value={itemSetting ? itemSetting : item.defaultValue} onChange={(e) => handleChange(e, sensor, settingType)} />
+      )}
+      {item.type === 'select' && (
+        <TextField sx={{ minWidth: '150px' }} select name={item.name} label={item.name} value={itemSetting ? itemSetting : item.defaultValue} onChange={(e) => handleChange(e, sensor, settingType)}>
+          {item.values.map((val, index) => (
+            <MenuItem fullWidth key={index} value={val}>
+              {val}
+            </MenuItem>
           ))}
-        </List>
-        </>
-      )
-      
-      }
-    </Box>
-  );
+        </TextField>
+      )}
+      {item.type === 'boolean' && (
+        <FormControl>
+          <FormControlLabel
+            control={
+              <Checkbox name={item.name} checked={itemSetting ? true : false} onChange={(e) => handleChange(e, sensor, settingType)} />
+            }
+            label={item.name}
+          />
+        </FormControl>
+      )}
+    </div>
+  )
+}
+
+function SensorDownloadSettings({ sensor, sensorSettings, handleSettingsChange, handleRemoveSensor, project }) {
+  if (!sensor) {
+    return (
+      <Box>
+        <Typography variant="h4">No sensor selected</Typography>
+      </Box>
+    );
+  } else {
+    return (
+      <Box>
+        <Typography marginTop={4} variant="h4">
+          {sensor.label}
+          <Tooltip title="Delete">
+            <IconButton aria-label="delete" color="error" onClick={() => handleRemoveSensor(sensor.id)} paddingLeft={2}>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </Typography>
+        <Typography variant="caption">{sensor.description}</Typography>
+        <Typography variant="body1" fontWeight={'bold'}> Arguments:</Typography>
+        <Stack useFlexGap flexWrap="wrap" direction="row" spacing={2} alignItems={'center'}>
+          {sensor.arguments.map((item, index) => (
+            <SettingItem settingType='argument' item={item} index={index} sensor={sensor} itemSetting={sensorSettings?.arguments?.[item.name]} handleChange={handleSettingsChange} />
+          ))}
+        </Stack>
+        {sensor.parameters.length > 0 && (
+          <Fragment>
+            <Typography variant="body1" fontWeight={'bold'}>Parameters:</Typography>
+            <Stack useFlexGap flexWrap="wrap" direction="row" spacing={2} alignItems={'center'}>
+              {sensor.parameters.map((item, index) => (
+                <SettingItem settingType='parameter' item={item} index={index} sensor={sensor} itemSetting={sensorSettings?.parameters?.[item.name]} handleChange={handleSettingsChange} />
+              ))}
+            </Stack>
+          </Fragment>
+        )}
+      </Box>
+    );
+  }
+
 }
 export default SensorDownloadSettings;
