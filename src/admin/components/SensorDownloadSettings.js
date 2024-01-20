@@ -1,5 +1,5 @@
-import { Box, Button, Checkbox, FormControl, FormControlLabel, IconButton, MenuItem, Stack, TextField, Tooltip, Typography } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
+import { Box, Checkbox, FormControl, FormControlLabel, IconButton, MenuItem, Stack, TextField, Tooltip, Typography } from "@mui/material";
 import React, { Fragment } from "react";
 
 function SettingItem({ item, index, sensor, handleChange, itemSetting, settingType }) {

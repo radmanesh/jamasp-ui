@@ -11,7 +11,7 @@ const ProtectedRoute = ({ user, loading, children }) => {
   return children ? children : (
 
     <React.Fragment>
-      <Navbar />
+      <Navbar user={user} loading={loading} />
 
       <Container maxWidth="lg">
         <Outlet />

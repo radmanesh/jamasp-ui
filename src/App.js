@@ -8,8 +8,10 @@ import { AuthContext } from './auth/AuthContext';
 import Login from "./auth/Login";
 import OAuthCallback from "./auth/OAuthCallback";
 import ProtectedRoute from "./components/routes/ProtectedRoute";
-import { auth } from "./firebase";
-import AuthLayout from "./layout/AuthLayout"; // Add missing import statement
+import { auth , logout } from "./firebase";
+import AuthLayout from "./layout/AuthLayout"; 
+import BlankLayout from "./layout/BlankLayout";
+import NotFound from "./pages/NotFound";
 
 
 export default function App() {
@@ -26,12 +28,19 @@ export default function App() {
             <Route exact path="/home" element={<Dashboard />} />
             <Route exact path="/showProject/:projectId" element={<ShowProject />} />
             <Route exact path="/newProject" element={<NewProject />} />
+            {/* <Route notfound path="*" element={<Navigate to="/notFound" />} /> */}
+            {/* <Route path="*" element={<NotFound />} /> */}
             
+            {/* <Route exact path="/auth/signout" element={logout()} /> */}
           </Route>
           <Route path="/auth" element={<AuthLayout />}> {/* Wrap nested routes inside a Route component */}
             <Route exact path="/auth/login" element={<Login />} />
             <Route exact path="/auth/fitbit_callback" element={<OAuthCallback />} />
-            {/* <Route exact path="/auth/signout" element={logout()} /> */}
+            <Route path="*" element={<Navigate to="/notFound" />} />
+          </Route>
+          <Route path="/" element={<BlankLayout />} >
+            <Route exact path="/notFound" element={<NotFound />} /> {/* Add a route for the 404 page */}
+            <Route path="*" element={<Navigate to="/notFound" />} />
           </Route>
         </Routes>
       </Router>
