@@ -5,7 +5,7 @@ import React, { Fragment } from "react";
 function SettingItem({ item, index, sensor, handleChange, itemSetting, settingType }) {
   if (item.name === 'user-id') return (<></>)
   return (
-    <div>
+    <div key={sensor.id + index + item.name}>
       {item.type === 'text' && (
         <TextField type="text" name={item.name} label={item.name} value={itemSetting ? itemSetting : item.defaultValue} onChange={(e) => handleChange(e, sensor, settingType)} />
       )}
@@ -18,7 +18,7 @@ function SettingItem({ item, index, sensor, handleChange, itemSetting, settingTy
       {item.type === 'select' && (
         <TextField sx={{ minWidth: '150px' }} select name={item.name} label={item.name} value={itemSetting ? itemSetting : item.defaultValue} onChange={(e) => handleChange(e, sensor, settingType)}>
           {item.values.map((val, index) => (
-            <MenuItem fullWidth key={index} value={val}>
+            <MenuItem key={index} value={val}>
               {val}
             </MenuItem>
           ))}
@@ -37,21 +37,32 @@ function SettingItem({ item, index, sensor, handleChange, itemSetting, settingTy
     </div>
   )
 }
-
+/**
+ * Renders the settings for a given sensor in par
+ * @param { sensor, sensorSettings } param0 
+ * @returns 
+ */
 function SensorDownloadSettings({ sensor, sensorSettings, handleSettingsChange, handleRemoveSensor, project }) {
+  console.log("SensorDownloadSettings",sensorSettings)
   if (!sensor) {
     return (
-      <Box>
-        <Typography variant="h4">No sensor selected</Typography>
+      <Box key={"no-applicable-key"+Date.now()}>
+        <Typography variant="h4">Something went wrong!!!!</Typography>
       </Box>
+    );
+  } else if (sensorSettings?.enabled === false) {
+    return (
+        <Box key={"no-applicable-key"+Date.now()} >
+          <Typography variant="h4">Sensor disabled</Typography>
+        </Box>
     );
   } else {
     return (
-      <Box>
+      <Box key={sensor.id}>
         <Typography marginTop={4} variant="h4">
           {sensor.label}
           <Tooltip title="Delete">
-            <IconButton aria-label="delete" color="error" onClick={() => handleRemoveSensor(sensor.id)} paddingLeft={2}>
+            <IconButton aria-label="delete" color="error" onClick={() => handleRemoveSensor(sensor.id)} sx={{ marginLeft: '10px' }}>
               <DeleteIcon />
             </IconButton>
           </Tooltip>
@@ -60,7 +71,7 @@ function SensorDownloadSettings({ sensor, sensorSettings, handleSettingsChange, 
         <Typography variant="body1" fontWeight={'bold'}> Arguments:</Typography>
         <Stack useFlexGap flexWrap="wrap" direction="row" spacing={2} alignItems={'center'}>
           {sensor.arguments.map((item, index) => (
-            <SettingItem settingType='argument' item={item} index={index} sensor={sensor} itemSetting={sensorSettings?.arguments?.[item.name]} handleChange={handleSettingsChange} />
+            <SettingItem key={sensor.id + index + item.name} settingType='argument' item={item} index={index} sensor={sensor} itemSetting={sensorSettings?.arguments?.[item.name]} handleChange={handleSettingsChange} />
           ))}
         </Stack>
         {sensor.parameters.length > 0 && (
@@ -68,7 +79,7 @@ function SensorDownloadSettings({ sensor, sensorSettings, handleSettingsChange, 
             <Typography variant="body1" fontWeight={'bold'}>Parameters:</Typography>
             <Stack useFlexGap flexWrap="wrap" direction="row" spacing={2} alignItems={'center'}>
               {sensor.parameters.map((item, index) => (
-                <SettingItem settingType='parameter' item={item} index={index} sensor={sensor} itemSetting={sensorSettings?.parameters?.[item.name]} handleChange={handleSettingsChange} />
+                <SettingItem key={sensor.id + index + item.name} settingType='parameter' item={item} index={index} sensor={sensor} itemSetting={sensorSettings?.parameters?.[item.name]} handleChange={handleSettingsChange} />
               ))}
             </Stack>
           </Fragment>
@@ -78,4 +89,5 @@ function SensorDownloadSettings({ sensor, sensorSettings, handleSettingsChange, 
   }
 
 }
+
 export default SensorDownloadSettings;

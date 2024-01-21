@@ -3,15 +3,14 @@ import { Timestamp, doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { AuthContext } from '../auth/AuthContext';
+import { fetchFibbitApiData } from '../auth/api';
 import { db } from '../firebase';
 import DataSettingsPanel from './DataSettingsPanel';
 import DevicesPanel from './DevicesPanel';
-import SensorsPanel from './SensorsPanel';
-import { fetchFibbitApiData } from '../auth/api';
-import { ProjectTabPanel } from './ProjectTabPanel';
-import { getFitbitAuthState } from '../auth/FitbitAuth';
-import { getUserIdByFitbitId } from '../auth/FitbitAuthUtils';
 import DownloadPanel from './DownloadPanel';
+import { ProjectTabPanel } from './ProjectTabPanel';
+import SensorsPanel from './SensorsPanel';
+import { generateSensorSettings, downloadSensors as sensorsList } from './utils/sensorsDownload';
 
 /**
  * Renders the ShowProject component.
@@ -21,24 +20,81 @@ import DownloadPanel from './DownloadPanel';
  * @returns {JSX.Element} The rendered ShowProject component.
  */
 const ShowProject = () => {
+  // Tab value which is used to display the correct tab
   const [tabValue, setTabValue] = useState(0);
+  // Get projectId from the URL
   const { projectId } = useParams();
-  //console.log(projectId);
+  // Project working with
   const [project, setProject] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  // Devices selected for the project to fetch data from
   const [userDevices, setUserDevices] = useState([]);
+  // Sensors selected for the project to fetch data from fitbit
+  // This is for the autamatic fetch job of the project
   const [userSensors, setUserSensors] = useState([]);
+  // Settings for the selected sensors for the automatic fetch job
   const [userSettings, setUserSettings] = useState({});
+  // Sensors selected for the project to download data from fitbit
+  const [sensorsName, setSensorsName] = React.useState([]);
+  // Settings for the selected sensors for the download job
+  const [sensorsSettings, setSensorsSettings] = React.useState([]);
+
+  // Alerts to display to the user
   const [alert, setAlert] = useState(null);
+  // Api responses fetched from fitbit
   const [apiResponse, setApiResponse] = useState(null);
-  
+  // User object from the AuthContext set in App.js
   const user = useContext(AuthContext);
 
+  /**
+   * Just for debugging purposes.
+   */
   useEffect(() => {
-      console.log("Api responses: ",apiResponse);
-    } , [apiResponse]
+    console.log("Api responses: ", apiResponse);
+  }, [apiResponse]
   );
 
+  /**
+   * updates sensors download settings object only if sensors where selected or deselected
+   */
+  useEffect(() => {
+    let newSensorsSettings = sensorsSettings.map((s) => ({ ...s, enabled: sensorsName.indexOf(s.sensorId) > -1 }));
+    sensorsName.forEach((sensorId) => {
+      if (newSensorsSettings.findIndex((s) => s.sensorId === sensorId) === -1) {
+        newSensorsSettings.push(generateSensorSettings(sensorsList.find((s) => s.id === sensorId)));
+      }
+    });
+    setSensorsSettings(newSensorsSettings);
+  }, [sensorsName]);
+
+  /**
+   * Retrieves project data from Firestore and updates the state on startup.
+   * 
+   * @return {void}
+   */
+  useEffect(() => {
+    const query = doc(db, "projects", projectId);
+
+    const unsubscribe = onSnapshot(query, (doc) => {
+      if (doc.exists()) {
+        setIsLoading(true);
+        setProject(doc.data());
+        console.log('project found:', doc.data());
+        setUserDevices(doc.data().devices);
+        setUserSensors(doc.data().sensors);
+        setUserSettings(doc.data().settings);
+        setSensorsName(doc.data().downloadSettings.filter((s) => s.enabled).map((s) => s.sensorId));
+        setSensorsSettings(doc.data().downloadSettings);
+        setIsLoading(false);
+        //console.log(userDevices, userSensors, userSettings);
+      } else {
+        setAlert({ type: 'error', message: `Project with id: ${projectId} could not be found!` });
+        setProject(null);
+      }
+    });
+
+    return unsubscribe;
+  }, [projectId]);
 
   /**
    * Handles the user devices input.
@@ -74,7 +130,7 @@ const ShowProject = () => {
    * @param {string} name - The name of the setting to update.
    * @param {any} value - The new value for the setting.
    * @return {void}
-   */
+  */
   const handleUserSettingsInput = (name, value) => {
     // Update the user settings object with the new name and value
     setUserSettings({
@@ -100,33 +156,11 @@ const ShowProject = () => {
     });
   }
 
-
   /**
-   * Retrieves project data from Firestore.
-   * 
-   * @return {void}
+   * handles the tab change event and updates the tab value.
+   * @param {*} event  event.target.name = argument name
+   * @param {*} newValue new tab value
    */
-  useEffect(() => {
-    const query = doc(db, "projects", projectId);
-
-    const unsubscribe = onSnapshot(query, (doc) => {
-      if (doc.exists()) {
-        setProject(doc.data());
-        console.log('project found:', doc.data());
-        setUserDevices(doc.data().devices);
-        setUserSensors(doc.data().sensors);
-        setUserSettings(doc.data().settings);
-        setIsLoading(false);
-        //console.log(userDevices, userSensors, userSettings);
-      } else {
-        setAlert({ type: 'error', message: `Project with id: ${projectId} could not be found!` });
-        setProject(null);
-      }
-    });
-
-    return unsubscribe;
-  }, [projectId]);
-
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
@@ -145,6 +179,7 @@ const ShowProject = () => {
         devices: userDevices,
         sensors: userSensors,
         settings: userSettings,
+        downloadSettings: sensorsSettings,
         updatedAt: Timestamp.now(),
       }
       console.log("updatedProject: ", updatedProject);
@@ -171,14 +206,14 @@ const ShowProject = () => {
    * Handle the download of the project as a JSON file.
    */
   const handleDownload = async () => {
-    console.log("handleDownload", project, user );
+    console.log("handleDownload", project, user);
     // const ownerUserId = await getUserIdByFitbitId('BPCPPB');
     // console.log("ownerUserId", ownerUserId);
     // const fitbitToken = await getFitbitAuthState(ownerUserId);
     // console.log("fitbitToken", fitbitToken);
-    const responses = await fetchFibbitApiData({  project: project, updateResponses: setApiResponse });
+    const responses = await fetchFibbitApiData({ project: project, updateResponses: setApiResponse });
     console.log("result: ", responses);
-    if(responses){
+    if (responses) {
       responses.forEach(element => {
         console.log(element);
         console.log(typeof element);
@@ -226,6 +261,13 @@ const ShowProject = () => {
     };
   }
 
+
+
+  /**
+   * Renders the project page.
+   *
+   * @returns {JSX.Element} - The rendered project page.
+   */
   return (
     <Container maxWidth="lg">
       <Typography variant="h3">{project?.name}</Typography>
@@ -251,14 +293,16 @@ const ShowProject = () => {
         <DataSettingsPanel project={project} onDateChange={handleDateChange} onUserInput={handleUserSettingsInput} userSettings={userSettings} />
       </ProjectTabPanel>
       <ProjectTabPanel value={tabValue} index={3}>
-        <DownloadPanel project={project} onUserInput={handleUserSensorsInput} userSensors={userSensors} />
+        <DownloadPanel project={project} setSensorsName={setSensorsName} sensorsName={sensorsName} sensorsSettings={sensorsSettings} setSensorsSettings={setSensorsSettings} />
       </ProjectTabPanel>
 
-      {apiResponse && <Paper elevation={3} sx={{ p: 2, mb: 2 }}>
-        <Typography variant="h6">API Responses</Typography>
-        <pre>Number of responses: {apiResponse.length}</pre>
-        <Button variant="contained" color="secondary" onClick={() => handleGenerateJsonDownload(apiResponse, `${project.name}-${Date.now()}`)}>Download</Button>
-      </Paper>}
+      {apiResponse &&
+        <Paper elevation={3} sx={{ p: 2, mb: 2 }}>
+          <Typography variant="h6">API Responses</Typography>
+          <pre>Number of responses: {apiResponse.length}</pre>
+          <Button variant="contained" color="secondary" onClick={() => handleGenerateJsonDownload(apiResponse, `${project.name}-${Date.now()}`)}>Download</Button>
+        </Paper>
+      }
 
       <Stack direction="row" spacing={2} justifyContent="space-between" sx={{ pt: 2 }}>
         <Button variant="contained" color="primary" onClick={handleSaveProject}>Save</Button>

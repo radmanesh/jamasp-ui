@@ -1,63 +1,29 @@
 import { Autocomplete, Box, FormGroup, TextField, Typography } from '@mui/material';
-import React, { Fragment, useEffect } from 'react';
+import { Fragment } from 'react';
 import SensorDownloadSettings from './components/SensorDownloadSettings';
-import { downloadSensors as sensorsList } from './utils/sensorsDownload';
+import { generateSensorSettings, downloadSensors as sensorsList } from './utils/sensorsDownload';
 
-
-
-// Sensor settings template
-const sensorsSettingsTemplate = [
-  {
-    sensorId: 'AZM_Intraday',
-    arguments: {
-      'user-id': '-',
-      'start-date': '2023-01-01',
-      'end-date': '2024-01-01',
-      'detail-level': '1min',
-    },
-    parameters: {
-      'timezone': 'UTC',
-    },
-    enabled: true,
-  },
-  {
-    sensorId: 'Activity_steps_Intraday',
-    arguments: {
-      'user-id': '-',
-      'start-date': '2023-01-01',
-      'end-date': '2024-01-01',
-      'detail-level': '1min',
-    },
-    parameters: {
-      'timezone': 'UTC',
-    },
-    enabled: true,
-  }
-];
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
 
 /**
+ * DownloadPanel component for managing sensor downloads.
  * 
- * @param {*} props 
- * @returns 
+ * @param {Object} props - The component props.
+ * @param {string} props.project - The project name.
+ * @param {function} props.setSensorsName - The function to set the sensors name.
+ * @param {function} props.setSensorsSettings - The function to set the sensors settings.
+ * @param {Array} props.sensorsName - The array of sensors names.
+ * @param {Array} props.sensorsSettings - The array of sensors settings.
+ * @returns {JSX.Element} The DownloadPanel component.
  */
 function DownloadPanel(props) {
-  const { project } = props;
+  const { project, setSensorsName, setSensorsSettings, sensorsName, sensorsSettings } = props;
 
-  const names = sensorsList.map((sensor) => sensor.id);
-  const [sensorsName, setSensorsName] = React.useState([]);
-  const [sensorsSettings, setSensorsSettings] = React.useState([]);
-
+  /**
+   * 
+   * @param {*} event  event.target.name = argument name
+   * @param {*} sensor   sensor object like admin/utills/sensorTemplate.js
+   * @param {*} settingType   argument or parameter
+   */
   const handleSensorSettingsChange = (event, sensor, settingType) => {
     let { name, value } = event.target;
 
@@ -89,38 +55,14 @@ function DownloadPanel(props) {
         return item;
       });
     }
-    //console.log("setting new settings",newSettings,newSettings.map(item => item.arguments));
+    console.log("setting new settings", sensorsSettings, newSettings);
     setSensorsSettings(newSettings);
   }
 
-
-  function generateSensorSettings(sensor) {
-    if (sensor === null || sensor === undefined) {
-      return null;
-    }
-    const sensorSettings = {
-      sensorId: sensor.id,
-      arguments: sensor.arguments.reduce((name, val) => ({ ...name, [`${val.name}`]: val.defaultValue }), {}),
-      parameters: sensor.parameters.reduce((name, val) => ({ ...name, [`${val.name}`]: val.defaultValue }), {}),
-      enabled: true,
-    };
-    return sensorSettings
-  }
-
-  useEffect(() => {
-    let newSensorsSettings = sensorsSettings.map((s) => ({ ...s, enabled: sensorsName.indexOf(s.sensorId) > -1 }));
-    sensorsName.forEach((sensorId) => {
-      if (newSensorsSettings.findIndex((s) => s.sensorId === sensorId) === -1) {
-        newSensorsSettings.push(generateSensorSettings(sensorsList.find((s) => s.id === sensorId)));
-      }
-    });
-    setSensorsSettings(newSensorsSettings);
-  }, [sensorsName]);
-
   /**
    * 
-   * @param {*} event 
-   * @param {*} name 
+   * @param {*} event  event.target.name = argument name
+   * @param {*} name  sensor name
    */
   const handleChange = (event) => {
     console.log("handleChange", event);
@@ -133,12 +75,14 @@ function DownloadPanel(props) {
     );
   };
 
-
+  /**
+   *  Render
+   */
   return (
     <Box
       component="form"
       sx={{
-        '& .MuiTextField-root': { m: 1 , mb: 2 },
+        '& .MuiTextField-root': { m: 1, mb: 2 },
       }}
       noValidate
       autoComplete="off"
@@ -146,9 +90,11 @@ function DownloadPanel(props) {
       <Autocomplete
         multiple
         id="sensors-multiple"
-        sx={{ mb: 2}}
+        sx={{ mb: 2 }}
         options={sensorsList}
+        filterSelectedOptions
         getOptionLabel={(option) => option.id}
+        value={sensorsList.filter((sensor) => sensorsName.includes(sensor.id))}
         onChange={(e, newValue) => {
           const event = {
             target: {
@@ -164,8 +110,6 @@ function DownloadPanel(props) {
             </Typography>
           </Box>
         )}
-        defaultValue={[]}
-        filterSelectedOptions
         renderInput={(params) => (
           <TextField
             {...params}
@@ -176,7 +120,8 @@ function DownloadPanel(props) {
         )}
       />
 
-      {/* <FormControl sx={{ m: 1, width: 480 }}>
+      {/* 
+      <FormControl sx={{ m: 1, width: 480 }}>
         <InputLabel id="sensors-multiple-checkbox-label">Sensors</InputLabel>
         <Select
           labelId="sensors-multiple-checkbox-label"
@@ -195,7 +140,8 @@ function DownloadPanel(props) {
             </MenuItem>
           ))}
         </Select>
-      </FormControl> */}
+      </FormControl> 
+      */}
 
       <FormGroup>
         {sensorsList.map((sensor) => (
@@ -215,7 +161,6 @@ function DownloadPanel(props) {
           </Fragment>
         ))}
       </FormGroup>
-
     </Box>
   )
 }

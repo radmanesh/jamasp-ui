@@ -9,7 +9,7 @@ const downloadSensors = [
       { name: 'start-date', type: 'date', defaultValue: '2024-01-01' },
       { name: 'end-date', type: 'date', defaultValue: '2024-01-01' },
       { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '1min' },
-      { name: 'boolean-type', type: 'boolean', defaultValue: true}
+      { name: 'boolean-type', type: 'boolean', defaultValue: true }
     ],
     parameters: [
       { name: 'timezone', type: 'select', values: ['UTC'], defaultValue: 'UTC' }
@@ -252,4 +252,17 @@ const downloadSensors = [
   }
 ];
 
-export { downloadSensors };
+function generateSensorSettings(sensor) {
+  if (sensor === null || sensor === undefined) {
+    return null;
+  }
+  const sensorSettings = {
+    sensorId: sensor.id,
+    arguments: sensor.arguments.reduce((name, val) => ({ ...name, [`${val.name}`]: val.defaultValue }), {}),
+    parameters: sensor.parameters.reduce((name, val) => ({ ...name, [`${val.name}`]: val.defaultValue }), {}),
+    enabled: true,
+  };
+  return sensorSettings
+}
+
+export { downloadSensors, generateSensorSettings };
