@@ -1,4 +1,3 @@
-// Sensor settings template
 /**
  * Sensor download settings template structure
  *
