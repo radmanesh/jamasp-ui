@@ -211,7 +211,7 @@ const ShowProject = () => {
   /**
    * Handle the download of the project as a JSON file.
    */
-  const handleDownload = async () => {
+  const handlePrepareDownload = async () => {
     setIsLoading(true);
     console.log("handleDownload", project, user);
     // const ownerUserId = await getUserIdByFitbitId('BPCPPB');
@@ -311,7 +311,7 @@ const ShowProject = () => {
 
       <Stack direction="row" spacing={2} justifyContent="space-between" sx={{ pt: 2 }}>
         <Button variant="contained" color="primary" onClick={handleSaveProject}>Save</Button>
-        <Button variant="contained" color="secondary" onClick={handleDownload}>Download</Button>
+        <Button variant="contained" color="secondary" onClick={handlePrepareDownload}>Fetch Data for Download</Button>
       </Stack>
 
 

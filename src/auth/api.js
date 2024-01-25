@@ -28,18 +28,25 @@ const fitbitApiBaseUrl = 'https://api.fitbit.com';
  * @param {Object} sensorSettings - The sensor settings object.
  * @returns {string} The generated API endpoint URL.
  */
-function generateAPIEndpointFromDownloadSensor(sensor, sensorSettings) {
+function generateAPIEndpointFromDownloadSettings(sensor, sensorSettings) {
+	console.log("sensor: ", sensor);
+	console.log("sensorSettings: ", sensorSettings);
+	console.log("sensorSettings.arguments: ", sensorSettings.arguments.length);
+
+	//const element = sensorSettingsTemplate.arguments.find(arg => Object.keys(arg)[0] === keyToFind);
+
 	let apiParams = Object.assign({}, ...sensor.arguments.map((arg, index) => {
-		let value = sensorSettings.arguments[arg] ? sensorSettings.arguments[arg] : sensor.defaultValues[index];
+		console.log("arg: ", arg);
+		let value = sensorSettings.arguments[arg.name] ? sensorSettings.arguments[arg.name] : sensor.defaultValues[index];
 		// if ((arg === 'start-date' || arg === 'end-date') && value.toDate) {
 		// 	value = moment(value.toDate()).format('YYYY-MM-DD');
 		// }
-		return { [arg]: value };
+		return { [arg.name]: value };
 	}));
 
 	const endpointUrl = fitbitApiBaseUrl + sensor.link.replace(/\[(.*?)\]/g, (match, p1) => apiParams[p1]);
 	console.log("result", endpointUrl);
-	
+
 	return endpointUrl;
 }
 
@@ -50,13 +57,13 @@ function generateAPIEndpointFromDownloadSensor(sensor, sensorSettings) {
  * @param {object} sensorSettings - The sensor settings.
  * @returns {object} The Axios configuration object.
  */
-function generateAxiosConfigFromDownloadSensor(fitibitToken, sensor , sensorSettings) {
+function generateAxiosConfigFromDownloadSettings(fitibitToken, sensor, sensorSettings) {
 	const config = {
 		headers: { Authorization: `Bearer ${fitibitToken.access_token}` },
 	};
-	if(sensorSettings.parameters){
+	if (sensorSettings !== null && sensorSettings !== undefined && sensorSettings.parameters && sensorSettings.parameters.length > 0	) {
 		sensorSettings.parameters.forEach((param) => {
-			config.params = {...config.params, ...param};
+			config.params = { ...config.params, ...param };
 		});
 	}
 	console.log("config: ", config);
@@ -83,7 +90,7 @@ const generateAPIEndpoint = (sensor, parameters) => {
 
 	const endpointUrl = fitbitApiBaseUrl + sensor.link.replace(/\[(.*?)\]/g, (match, p1) => apiParams[p1]);
 	//console.log("result", endpointUrl);
-	
+
 	return endpointUrl;
 }
 
@@ -98,9 +105,9 @@ const generateAxiosConfig = (fitibitToken, sensor) => {
 	const config = {
 		headers: { Authorization: `Bearer ${fitibitToken.access_token}` },
 	};
-	if(sensor.parameters){
+	if (sensor.parameters) {
 		sensor.parameters.forEach((param) => {
-			config.params = {...config.params, ...param};
+			config.params = { ...config.params, ...param };
 		});
 	}
 	console.log("config: ", config);
@@ -116,9 +123,9 @@ const generateAxiosConfig = (fitibitToken, sensor) => {
  * @param {Function} options.updateResponses - The function to update the responses with the fetched data.
  * @returns {Promise<Array>} - A promise that resolves to an array of fetched data.
  */
-const fetchFibbitApiData = async ( {project, updateResponses }) => {
-	console.log({"project": project});
-	if (!project ) {
+const fetchFibbitApiData = async ({ project, updateResponses }) => {
+	console.log({ "project": project });
+	if (!project) {
 		console.error('No Fitbit token was provided.');
 		return null;
 	}
@@ -129,16 +136,18 @@ const fetchFibbitApiData = async ( {project, updateResponses }) => {
 		console.log("deviceGoogleUserId: ", deviceGoogleUserId);
 		const fitbitToken = await getFitbitAuthState(deviceGoogleUserId);
 		console.log("fitbitToken: ", fitbitToken);
-		const sensorsToDownload = downloadSensors.filter(sensor => 
-			project.downloadSensors.some(setting => setting.sensorId === sensor.id)
+		console.log("project.downloadSettings: ", project.downloadSettings);
+
+		const sensorsToDownload = downloadSensors.filter(sensor =>
+			project.downloadSettings.some(setting => setting.sensorId === sensor.id)
 		);
 		console.log("sensorsToDownload: ", sensorsToDownload);
 
 		sensorsToDownload.forEach((sensor) => {
-			const apiEndpoint = { 
+			const apiEndpoint = {
 				//endpointUrl: generateAPIEndpoint(sensor, { 'user-id': device, 'start-date': project.settings.dateRange.from, 'end-date': project.settings.dateRange.to, 'detail-level': project.settings.detailLevel }),
-				endpointUrl: generateAPIEndpointFromDownloadSensor(sensor, project.downloadSensors.find(sd => sd.sensorId === sensor.id)),
-				axiosConfig: generateAxiosConfigFromDownloadSensor(fitbitToken, sensor , project.downloadSensors.find(sd => sd.sensorId === sensor.id)) 
+				endpointUrl: generateAPIEndpointFromDownloadSettings(sensor, project.downloadSettings.find(sd => sd.sensorId === sensor.id)),
+				axiosConfig: generateAxiosConfigFromDownloadSettings(fitbitToken, sensor, project.downloadSettings.find(sd => sd.sensorId === sensor.id))
 			};
 			apiEndpoints.push(apiEndpoint);
 		});
@@ -163,7 +172,7 @@ const fetchFibbitApiData = async ( {project, updateResponses }) => {
 						rateLimit: result.value.headers['Fitbit-Rate-Limit-Limit'],
 						rateLimitRemaining: result.value.headers['Fitbit-Rate-Limit-Remaining'],
 						rateLimitReset: result.value.headers['Fitbit-Rate-Limit-Reset']
-					};					
+					};
 				} catch (error) {
 					console.log("error: ", error);
 					console.log("result.value.headers: ", result.value.headers);
@@ -205,4 +214,4 @@ async function getOrRenewAccessToken(type, code, verifier) {
 	localStorage.setItem('last_saved_time', Date.now());
 	return tokenInfo.data;
 }
-export { getOrRenewAccessToken , fetchFibbitApiData, generateAPIEndpoint, generateAxiosConfig};
+export { getOrRenewAccessToken, fetchFibbitApiData, generateAPIEndpoint, generateAxiosConfig };
