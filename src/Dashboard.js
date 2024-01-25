@@ -61,7 +61,7 @@ const [fitbitToken, setFitbitToken] = useState(null);
 
 
   return (
-    <Container maxWidth="md" sx={{ mt: 10 }} align="center">
+    <Container maxWidth="md" sx={{ mt: 1 }} align="center">
       <Typography variant="h3">User Dashboard</Typography>
       {/* <Button onClick={() => logout()}>Sign Out</Button> */}
       {fitbitToken === null && <div>You should authenticate with fitbit</div>}
@@ -69,17 +69,17 @@ const [fitbitToken, setFitbitToken] = useState(null);
       {fitbitToken !== null &&
         <div>
           <Paper elevation={3} sx={{ width: '100%', overflow: 'hidden', opacity: 0.9 , m: 3 , p: 3 }} >
-            <Typography variant="body2" >
+            <Typography variant="h6" color="initial" >
               You are authenticated with user id of : {fitbitToken?.user_id}
             </Typography>
             <Typography variant="body1" color="initial">
-              Thank you for completing the authentication process.
+              Thank you for joining our experiment and completing the this step.
             </Typography>
-            <Typography variant="h5" color="initial">
+            <Typography variant="h4" color="initial">
               You are good to go. 
-              <ThumbUpIcon fontSize='large' color='success' sx={{ bottom:0, alignSelf: 'center'}} />
             </Typography>
-            <Button align="end"  size= 'small' variant='contained' color='error' onClick={() => removeUserDevice()}>Remove Device</Button>
+            <ThumbUpIcon color='success' sx={{ fontSize: '100px', bottom:0, alignSelf: 'center'}} />
+            {/* <Button align="end"  size= 'small' variant='contained' color='error' onClick={() => removeUserDevice()}>Remove Device</Button> */}
           </Paper>
 
         </div>
@@ -89,4 +89,4 @@ const [fitbitToken, setFitbitToken] = useState(null);
 };
 
 export default Dashboard;
-export {removeUserDevice } ;
+// Remove the export statement for removeUserDevice

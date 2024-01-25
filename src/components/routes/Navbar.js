@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 
-const adminPages = [{ name: 'AdminDashboard', path: '/admin' }, { name: 'NewProject', path: '/admin/newProject' }, {name: 'users', path: '/admin/users'}];
+const adminPages = [{ name: 'Admin', path: '/admin' }, { name: 'NewProject', path: '/admin/newProject' }, {name: 'Users', path: '/admin/users'}];
 const pages = [{ name: 'Dashboard', path: '/home' }, { name: 'About', path: '/about' }];
 const settings = [{ name: 'Dashboard', path: '/home' }, { name: 'Logout', path: '/auth/signout' }, { name: 'Profile', path: '/profile' }];
 

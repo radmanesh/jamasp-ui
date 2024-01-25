@@ -45,7 +45,7 @@ const AdminDashboard = () => {
   }
 
   return (
-    <Container maxWidth="lg">
+    <Container>
       <Typography variant="h3">Admin Dashboard</Typography>
       <Typography variant="body1">Welcome {auth?.currentUser?.displayName}! This is your dashboard where you can see your projects. </Typography>
       {isLoading && <LinearProgress />}

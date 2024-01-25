@@ -12,6 +12,8 @@ import { auth , logout } from "./firebase";
 import AuthLayout from "./layout/AuthLayout"; 
 import BlankLayout from "./layout/BlankLayout";
 import NotFound from "./pages/NotFound";
+import Users from "./admin/pages/Users";
+import About from "./pages/About";
 
 export default function App() {
   const [user, loading] = useAuthState(auth);
@@ -24,9 +26,11 @@ export default function App() {
           <Route path="/" element={<ProtectedRoute user={user} loading={loading} />}>
             <Route exact path="/" element={<Navigate to="/home" replace />} />
             <Route exact path="/home" element={<Dashboard />} />
+            <Route exact path="/about" element={<About />} />
             <Route exact path="/admin" element={<AdminDashboard />} />
             <Route exact path="/admin/showProject/:projectId" element={<ShowProject />} />
             <Route exact path="/admin/newProject" element={<NewProject />} />
+            <Route exact path="/admin/users" element={<Users />} />
             {/* <Route path="*" element={<NotFound replace />} /> */}
             {/* I don't know why the logout route makes the user to logout immediately. */}
             {/* Also after figuring that out, where to place it here or under /auth route */}
