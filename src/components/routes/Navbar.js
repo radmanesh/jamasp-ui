@@ -36,6 +36,11 @@ function Navbar({ user, loading }) {
     navigate(path);
   };
 
+  React.useEffect(() => {
+    console.log("user: ", user);
+    console.log("loading: ", loading);
+  }, [user,loading]);  
+
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -135,7 +140,7 @@ function Navbar({ user, loading }) {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt={user?.displayName} src={user?.pathoURL} />
+                <Avatar alt={user?.displayName} src={user?.photoURL} />
               </IconButton>
             </Tooltip>
             <Menu

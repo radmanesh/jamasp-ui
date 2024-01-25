@@ -11,7 +11,6 @@ import DownloadPanel from './DownloadPanel';
 import { ProjectTabPanel } from './ProjectTabPanel';
 import SensorsPanel from './SensorsPanel';
 import { generateSensorSettings, downloadSensors as sensorsList } from './utils/sensorsDownload';
-import { set } from 'lodash';
 
 /**
  * Renders the ShowProject component.
@@ -45,13 +44,13 @@ const ShowProject = () => {
   // Api responses fetched from fitbit
   const [apiResponse, setApiResponse] = useState(null);
   // User object from the AuthContext set in App.js
-  const {user , loading} = useContext(AuthContext);
+  const { user, loading } = useContext(AuthContext);
 
 
   useEffect(() => {
     console.log("user: ", user);
     console.log("loading: ", loading);
-}, []);
+  }, []);
 
   /**
    * Just for debugging purposes.

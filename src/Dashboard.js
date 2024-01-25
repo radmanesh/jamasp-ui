@@ -8,7 +8,7 @@ import {ThumbUp as ThumbUpIcon}  from '@mui/icons-material';
 
 const Dashboard = () => {
   const [user, loading] = useAuthState(auth);
-  const [fitbitToken, setFitbitToken] = useState(null);
+const [fitbitToken, setFitbitToken] = useState(null);
 
 
   // This is a demonstration for requesting data scopes
@@ -48,7 +48,7 @@ const Dashboard = () => {
 
   }, [loading, user]); // The dependency array ensures the effect runs when the access token changes
 
-  const removeUserDevice = () => {
+  function removeUserDevice() {
     if (user) {
       removeDevice(user.uid).then((newUser) => {
         console.log("newUser", newUser);
@@ -61,26 +61,25 @@ const Dashboard = () => {
 
 
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="md" sx={{ mt: 10 }} align="center">
       <Typography variant="h3">User Dashboard</Typography>
       {/* <Button onClick={() => logout()}>Sign Out</Button> */}
       {fitbitToken === null && <div>You should authenticate with fitbit</div>}
       {fitbitToken === null && <AuthenticationBtn />}
       {fitbitToken !== null &&
         <div>
-          <Paper elevation={3} sx={{ width: '100%', overflow: 'hidden', opacity: 0.5 , m: 3 , p: 3 }} >
-            <Typography variant="h5">You are authenticated with fitbit</Typography>
-            <br />
-            <Typography variant="body1" >
+          <Paper elevation={3} sx={{ width: '100%', overflow: 'hidden', opacity: 0.9 , m: 3 , p: 3 }} >
+            <Typography variant="body2" >
               You are authenticated with user id of : {fitbitToken?.user_id}
             </Typography>
             <Typography variant="body1" color="initial">
               Thank you for completing the authentication process.
-              <br />
-              You are good to go. 
-              <ThumbUpIcon />
             </Typography>
-            <Button align="end" variant='contained' color='error' onClick={() => removeUserDevice()}>Remove Device</Button>
+            <Typography variant="h5" color="initial">
+              You are good to go. 
+              <ThumbUpIcon fontSize='large' color='success' sx={{ bottom:0, alignSelf: 'center'}} />
+            </Typography>
+            <Button align="end"  size= 'small' variant='contained' color='error' onClick={() => removeUserDevice()}>Remove Device</Button>
           </Paper>
 
         </div>
@@ -90,3 +89,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+export {removeUserDevice } ;
