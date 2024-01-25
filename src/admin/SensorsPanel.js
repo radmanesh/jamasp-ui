@@ -1,6 +1,6 @@
 import { Box, Checkbox, FormControlLabel, FormGroup } from '@mui/material';
 import React from 'react';
-import { sensors as sensorsList } from './sensors';
+import { sensors as sensorsList } from './utils/sensors';
 
 /**
  * 

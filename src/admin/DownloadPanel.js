@@ -94,7 +94,7 @@ function DownloadPanel(props) {
         options={sensorsList}
         filterSelectedOptions
         getOptionLabel={(option) => option.id}
-        value={sensorsList.filter((sensor) => sensorsName.includes(sensor.id))}
+        value={sensorsList.filter((sensor) => sensorsName?.includes(sensor.id))}
         onChange={(e, newValue) => {
           const event = {
             target: {
@@ -149,7 +149,7 @@ function DownloadPanel(props) {
             {sensorsName?.includes(sensor.id) && (
               <SensorDownloadSettings key={sensor.id}
                 sensor={sensor}
-                sensorSettings={sensorsSettings.find((s) => s.sensorId === sensor.id)}
+                sensorSettings={sensorsSettings?.find((s) => s.sensorId === sensor.id)}
                 project={project}
                 handleSettingsChange={handleSensorSettingsChange}
                 handleRemoveSensor={(sensorId) => {

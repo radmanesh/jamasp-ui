@@ -19,14 +19,14 @@ export default function App() {
   return (
     <div className="app">
       <AuthContext.Provider value={{user, loading}}>
-      <Router>
+      <Router future={{ v7_startTransition: true }}>
         <Routes>
           <Route path="/" element={<ProtectedRoute user={user} loading={loading} />}>
             <Route exact path="/" element={<Navigate to="/home" replace />} />
-            <Route exact path="/admin" element={<AdminDashboard />} />
             <Route exact path="/home" element={<Dashboard />} />
-            <Route exact path="/showProject/:projectId" element={<ShowProject />} />
-            <Route exact path="/newProject" element={<NewProject />} />
+            <Route exact path="/admin" element={<AdminDashboard />} />
+            <Route exact path="/admin/showProject/:projectId" element={<ShowProject />} />
+            <Route exact path="/admin/newProject" element={<NewProject />} />
             {/* <Route path="*" element={<NotFound replace />} /> */}
             {/* I don't know why the logout route makes the user to logout immediately. */}
             {/* Also after figuring that out, where to place it here or under /auth route */}

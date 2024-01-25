@@ -1,7 +1,7 @@
 import 'firebase/firestore';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../firebase';
-import { sensors } from '../sensors';
+import { sensors } from './sensors';
 
 // Function to get all users from Firestore
 const getAllFitbitUsersId = async () => {

@@ -10,7 +10,7 @@ import getAllFitbitUsersId, { getAllSensorsId } from './utils/utils';
 
 const NewProject = () => {
 
-  const navigator = useNavigate();
+  const navigate = useNavigate();
 
   /**
    * Handles the form submission for creating a new project.
@@ -35,6 +35,8 @@ const NewProject = () => {
           },
           enabled: true,
         },
+        downloadSettings: [
+        ],
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
       };
@@ -44,7 +46,7 @@ const NewProject = () => {
         const projectId = docRef.id;
         console.log("Project added to Firestore with ID:", projectId, projectDoc);
         // Redirect to the project page
-        navigator(`/showProject/${projectId}`);
+        navigate(`/admin/showProject/${projectId}`);
       });
     });
   };

@@ -11,6 +11,7 @@ import DownloadPanel from './DownloadPanel';
 import { ProjectTabPanel } from './ProjectTabPanel';
 import SensorsPanel from './SensorsPanel';
 import { generateSensorSettings, downloadSensors as sensorsList } from './utils/sensorsDownload';
+import { set } from 'lodash';
 
 /**
  * Renders the ShowProject component.
@@ -64,9 +65,9 @@ const ShowProject = () => {
    * updates sensors download settings object only if sensors where selected or deselected
    */
   useEffect(() => {
-    let newSensorsSettings = sensorsSettings.map((s) => ({ ...s, enabled: sensorsName.indexOf(s.sensorId) > -1 }));
-    sensorsName.forEach((sensorId) => {
-      if (newSensorsSettings.findIndex((s) => s.sensorId === sensorId) === -1) {
+    let newSensorsSettings = sensorsSettings?.map((s) => ({ ...s, enabled: sensorsName.indexOf(s.sensorId) > -1 }));
+    sensorsName?.forEach((sensorId) => {
+      if (newSensorsSettings?.findIndex((s) => s.sensorId === sensorId) === -1) {
         newSensorsSettings.push(generateSensorSettings(sensorsList.find((s) => s.id === sensorId)));
       }
     });
@@ -89,7 +90,7 @@ const ShowProject = () => {
         setUserDevices(doc.data().devices);
         setUserSensors(doc.data().sensors);
         setUserSettings(doc.data().settings);
-        setSensorsName(doc.data().downloadSettings.filter((s) => s.enabled).map((s) => s.sensorId));
+        setSensorsName(doc.data()?.downloadSettings?.filter((s) => s.enabled).map((s) => s.sensorId));
         setSensorsSettings(doc.data().downloadSettings);
         setIsLoading(false);
         //console.log(userDevices, userSensors, userSettings);
@@ -212,6 +213,7 @@ const ShowProject = () => {
    * Handle the download of the project as a JSON file.
    */
   const handleDownload = async () => {
+    setIsLoading(true);
     console.log("handleDownload", project, user);
     // const ownerUserId = await getUserIdByFitbitId('BPCPPB');
     // console.log("ownerUserId", ownerUserId);
@@ -225,11 +227,9 @@ const ShowProject = () => {
         console.log(typeof element);
       });
     }
-
     //const jsonOutput = handleGenerateJsonDownload(result, `${project.name}-${Date.now()}.json`);
     //console.log("jsonOutput: ", jsonOutput);
-
-
+    setIsLoading(false);
   }
 
   const handleGenerateJsonDownload = (data, fileName) => {

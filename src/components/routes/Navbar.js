@@ -5,20 +5,18 @@ import { useNavigate } from 'react-router-dom';
 
 
 
-const adminPages = [{ name: 'AdminDashboard', path: '/admin' }, { name: 'NewProject', path: '/newProject' }];
+const adminPages = [{ name: 'AdminDashboard', path: '/admin' }, { name: 'NewProject', path: '/admin/newProject' }, {name: 'users', path: '/admin/users'}];
 const pages = [{ name: 'Dashboard', path: '/home' }, { name: 'About', path: '/about' }];
 const settings = [{ name: 'Dashboard', path: '/home' }, { name: 'Logout', path: '/auth/signout' }, { name: 'Profile', path: '/profile' }];
 
 function Navbar({ user, loading }) {
-  console.log("Navbar, ", user, loading);
-
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const navigate = useNavigate();
 
   const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget);
     console.log("Open navMenu event", event)
+    setAnchorElNav(event.currentTarget);
   };
   const handleOpenUserMenu = (event) => {
     console.log("Open userMenu event", event)
@@ -26,14 +24,14 @@ function Navbar({ user, loading }) {
   };
 
   const handleCloseNavMenu = (event, path) => {
-    console.log("Close navMenu event", event)
-    console.log(" path ", path)
+    //console.log("Close navMenu event", event)
+    //console.log(" path ", path)
     setAnchorElNav(null);
     navigate(path);
   };
 
   const handleCloseUserMenu = (event, path) => {
-    console.log("Close userMenu event", event)
+    //console.log("Close userMenu event", event)
     setAnchorElUser(null);
     navigate(path);
   };
