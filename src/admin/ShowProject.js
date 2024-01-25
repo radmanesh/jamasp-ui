@@ -44,7 +44,13 @@ const ShowProject = () => {
   // Api responses fetched from fitbit
   const [apiResponse, setApiResponse] = useState(null);
   // User object from the AuthContext set in App.js
-  const user = useContext(AuthContext);
+  const {user , loading} = useContext(AuthContext);
+
+
+  useEffect(() => {
+    console.log("user: ", user);
+    console.log("loading: ", loading);
+}, []);
 
   /**
    * Just for debugging purposes.

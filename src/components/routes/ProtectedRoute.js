@@ -1,10 +1,13 @@
-import React from 'react'
-import { Navigate, Outlet } from 'react-router-dom'
+import { Container, LinearProgress, Link, Typography } from '@mui/material';
+import React from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
-import { Container, Link, Typography } from '@mui/material';
 
 const ProtectedRoute = ({ user, loading, children }) => {
+
   if (!loading && !user) {
+    console.log("ProtectedRoute is redirecting to login",user,loading);
+    // if the user is not logged in, redirect to the login page , it goes back in history
     return <Navigate to="/auth/login" replace />
   }
 
@@ -12,9 +15,11 @@ const ProtectedRoute = ({ user, loading, children }) => {
 
     <React.Fragment>
       <Navbar user={user} loading={loading} />
-
       <Container maxWidth="lg">
-        <Outlet />
+        {loading && (
+          <LinearProgress />
+        )}
+          <Outlet />
       </Container>
 
       <footer>

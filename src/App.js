@@ -13,34 +13,34 @@ import AuthLayout from "./layout/AuthLayout";
 import BlankLayout from "./layout/BlankLayout";
 import NotFound from "./pages/NotFound";
 
-
 export default function App() {
   const [user, loading] = useAuthState(auth);
   
   return (
     <div className="app">
-      <AuthContext.Provider value={user}>
+      <AuthContext.Provider value={{user, loading}}>
       <Router>
         <Routes>
           <Route path="/" element={<ProtectedRoute user={user} loading={loading} />}>
-            <Route exact path="/" element={<Navigate to="/home" />} />
+            <Route exact path="/" element={<Navigate to="/home" replace />} />
             <Route exact path="/admin" element={<AdminDashboard />} />
             <Route exact path="/home" element={<Dashboard />} />
             <Route exact path="/showProject/:projectId" element={<ShowProject />} />
             <Route exact path="/newProject" element={<NewProject />} />
-            {/* <Route notfound path="*" element={<Navigate to="/notFound" />} /> */}
-            {/* <Route path="*" element={<NotFound />} /> */}
-            
+            {/* <Route path="*" element={<NotFound replace />} /> */}
+            {/* I don't know why the logout route makes the user to logout immediately. */}
+            {/* Also after figuring that out, where to place it here or under /auth route */}
             {/* <Route exact path="/auth/signout" element={logout()} /> */}
           </Route>
           <Route path="/auth" element={<AuthLayout />}> {/* Wrap nested routes inside a Route component */}
             <Route exact path="/auth/login" element={<Login />} />
             <Route exact path="/auth/fitbit_callback" element={<OAuthCallback />} />
+            {/* <Route exact path="/auth/signout" element={logout()} /> */}
             <Route path="*" element={<Navigate to="/notFound" />} />
           </Route>
           <Route path="/" element={<BlankLayout />} >
             <Route exact path="/notFound" element={<NotFound />} /> {/* Add a route for the 404 page */}
-            <Route path="*" element={<Navigate to="/notFound" />} />
+            <Route path="*" element={<Navigate to="/notFound" replace />} />
           </Route>
         </Routes>
       </Router>
