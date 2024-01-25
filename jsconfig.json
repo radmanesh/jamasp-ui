@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "module": "CommonJS",
-    "target": "ES6",
+    "target": "ES2017",
     "checkJs": false
   },
   "exclude": ["node_modules", "**/node_modules/*"],
-  "include": ["src/**/*", "./tsconfig.json"]
+  "include": ["src/**/*"]
 }
