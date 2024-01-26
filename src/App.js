@@ -14,6 +14,9 @@ import BlankLayout from "./layout/BlankLayout";
 import NotFound from "./pages/NotFound";
 import Users from "./admin/pages/Users";
 import About from "./pages/About";
+import ShowUser from "./admin/pages/ShowUser";
+
+// eslint-disable-next-line import/no-anonymous-default-export
 
 export default function App() {
   const [user, loading] = useAuthState(auth);
@@ -31,6 +34,7 @@ export default function App() {
             <Route exact path="/admin/showProject/:projectId" element={<ShowProject />} />
             <Route exact path="/admin/newProject" element={<NewProject />} />
             <Route exact path="/admin/users" element={<Users />} />
+            <Route path="/admin/users/:userId" element={<ShowUser />} />"
             {/* <Route path="*" element={<NotFound replace />} /> */}
             {/* I don't know why the logout route makes the user to logout immediately. */}
             {/* Also after figuring that out, where to place it here or under /auth route */}

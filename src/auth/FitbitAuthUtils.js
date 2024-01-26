@@ -17,7 +17,7 @@ export async function storeFitbitToken(userId, token) {
   if (!token.user_id) {
     console.log("token.user_id is null");
     alert("token.user_id is null");
-    return;
+    return null;
   } else {
     try {
       const q = query(collection(db, "users"), where("uid", "==", userId));
@@ -32,10 +32,19 @@ export async function storeFitbitToken(userId, token) {
               timestamp: serverTimestamp()
             }
           }
-        );
+        ).then((res) => {
+          console.log("Document successfully updated!", res);
+          return doc.ref;
+
+        }).catch((error) => {
+          // The document probably doesn't exist.
+          console.error("Error updating document: ", error);
+        });
+
       });
     } catch (error) {
       console.error("Error adding document: ", error);
+      return null;
       // Handle error
     }
   }

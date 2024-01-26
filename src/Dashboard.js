@@ -1,14 +1,14 @@
+import { ThumbUp as ThumbUpIcon } from '@mui/icons-material';
+import { Container, Paper, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import AuthenticationBtn from './auth/AuthenticationBtn';
 import { getFitbitAuthState, removeDevice } from './auth/FitbitAuth';
-import { auth, logout } from './firebase';
-import { Button, Container, Paper, Typography } from '@mui/material';
-import {ThumbUp as ThumbUpIcon}  from '@mui/icons-material';
+import { auth } from './firebase';
 
 const Dashboard = () => {
   const [user, loading] = useAuthState(auth);
-const [fitbitToken, setFitbitToken] = useState(null);
+  const [fitbitToken, setFitbitToken] = useState(null);
 
 
   // This is a demonstration for requesting data scopes
@@ -68,7 +68,7 @@ const [fitbitToken, setFitbitToken] = useState(null);
       {fitbitToken === null && <AuthenticationBtn />}
       {fitbitToken !== null &&
         <div>
-          <Paper elevation={3} sx={{ width: '100%', overflow: 'hidden', opacity: 0.9 , m: 3 , p: 3 }} >
+          <Paper elevation={3} sx={{ width: '100%', overflow: 'hidden', opacity: 0.9, m: 3, p: 3 }} >
             <Typography variant="h6" color="initial" >
               You are authenticated with user id of : {fitbitToken?.user_id}
             </Typography>
@@ -76,9 +76,9 @@ const [fitbitToken, setFitbitToken] = useState(null);
               Thank you for joining our experiment and completing the this step.
             </Typography>
             <Typography variant="h4" color="initial">
-              You are good to go. 
+              You are good to go.
             </Typography>
-            <ThumbUpIcon color='success' sx={{ fontSize: '100px', bottom:0, alignSelf: 'center'}} />
+            <ThumbUpIcon color='success' sx={{ fontSize: '100px', bottom: 0, alignSelf: 'center' }} />
             {/* <Button align="end"  size= 'small' variant='contained' color='error' onClick={() => removeUserDevice()}>Remove Device</Button> */}
           </Paper>
 

@@ -48,6 +48,7 @@ const ShowProject = () => {
 
 
   useEffect(() => {
+    console.log("at the start of show project ");
     console.log("user: ", user);
     console.log("loading: ", loading);
   }, []);

@@ -115,6 +115,17 @@ const generateAxiosConfig = (fitibitToken, sensor) => {
 }
 
 
+const fetchFitbitApiEndpont = async (fitbitToken, edndpoint, endpointSettings) => {
+	const endpointUrl ={ endpointUrl: generateAPIEndpointFromDownloadSettings(edndpoint, endpointSettings) , axiosConfig: generateAxiosConfigFromDownloadSettings(fitbitToken, edndpoint, endpointSettings) };
+	console.log("endpointUrl: ", endpointUrl);
+	axios.get(endpointUrl.endpointUrl, endpointUrl.axiosConfig).then((result) => {
+		console.log("result: ", result);
+		return {status: result.status, data: result.data}
+	}).catch((error) => {
+		console.log("error: ", error);
+		return {status: error.response.status, data: error.response.data}
+	});
+}
 
 /**
  * Fetches data from the Fitbit API for a given project.
@@ -123,7 +134,7 @@ const generateAxiosConfig = (fitibitToken, sensor) => {
  * @param {Function} options.updateResponses - The function to update the responses with the fetched data.
  * @returns {Promise<Array>} - A promise that resolves to an array of fetched data.
  */
-const fetchFibbitApiData = async ({ project, updateResponses }) => {
+const fetchFitbitApiData = async ({ project, updateResponses, updateRateLimits }) => {
 	console.log({ "project": project });
 	if (!project) {
 		console.error('No Fitbit token was provided.');
@@ -159,9 +170,20 @@ const fetchFibbitApiData = async ({ project, updateResponses }) => {
 		requests.push(axios.get(endpoint.endpointUrl, endpoint.axiosConfig));
 	});
 
+
 	// Use Promise.allSettled to make sure all requests are completed
 	Promise.allSettled(requests).then((results) => {
 		console.log("results: ", results);
+		const apiRequestLogDBI =  {
+			projectId: project.id,
+			userId: project.userId,
+			date: new Date(),
+			projectName: project.name,
+			downloadSettings: project.downloadSettings,
+			devices: project.devices,
+			requests: [], //requests.
+			responses: [] //results.
+		};
 		const data = [];
 		let rateLimit = {};
 		results.forEach((result) => {
@@ -214,4 +236,4 @@ async function getOrRenewAccessToken(type, code, verifier) {
 	localStorage.setItem('last_saved_time', Date.now());
 	return tokenInfo.data;
 }
-export { getOrRenewAccessToken, fetchFibbitApiData, generateAPIEndpoint, generateAxiosConfig };
+export { getOrRenewAccessToken, fetchFitbitApiData as fetchFibbitApiData, generateAPIEndpoint, generateAxiosConfig , fetchFitbitApiEndpont };

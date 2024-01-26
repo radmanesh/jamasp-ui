@@ -4,7 +4,8 @@ import { db } from '../firebase';
 import { useNavigate } from 'react-router-dom';
 import { Timestamp, collection } from 'firebase/firestore';
 import { addDoc } from 'firebase/firestore';
-import getAllFitbitUsersId, { getAllSensorsId } from './utils/utils';
+import { getAllSensorsId } from './utils/utils';
+import { getAllFitbitUsersId } from '../utils/firebase/users';
 
 // Create a new project
 
@@ -31,7 +32,7 @@ const NewProject = () => {
           detailLevel: '1min',
           dateRange: {
             from: Timestamp.fromMillis(new Date(2023, 12, 1).getTime()),
-            to: Timestamp.fromMillis(new Date(2024, 1 , 1).getTime()),
+            to: Timestamp.fromMillis(new Date(2024, 1, 1).getTime()),
           },
           enabled: true,
         },

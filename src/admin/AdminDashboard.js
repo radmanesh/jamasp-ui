@@ -50,6 +50,7 @@ const AdminDashboard = () => {
       <Typography variant="body1">Welcome {auth?.currentUser?.displayName}! This is your dashboard where you can see your projects. </Typography>
       {isLoading && <LinearProgress />}
       {alert && <Alert severity={alert.type}>{alert.message}</Alert>}
+      {/* FIXME: What is this tag doing? if it's really doing something use the correct labels */}
       <nav aria-label="secondary mailbox folders">
         <List>
           {projects.map((project) => {

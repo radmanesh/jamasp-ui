@@ -515,6 +515,16 @@ const downloadSensors = [
       { name: 'end-date', type: 'date', defaultValue: '2024-01-01'}
     ],
     parameters:[]
+  },
+  {
+    id:"Get_User_Profile",
+    label:"Get User Profile",
+    description:"Retrieves the user's profile data.",
+    link:"/1/user/[user-id]/profile.json",
+    arguments:[
+      { name: 'user-id', type: 'text', defaultValue: '-' }
+    ],
+    parameters:[]
   }
 ];
 

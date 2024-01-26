@@ -1,23 +1,21 @@
 import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
-import { collection, getDocs, query, where } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
-import { db } from '../firebase';
+import { fetchFitBitUsers } from '../utils/firebase/users';
 
 function DevicesPanel(props) {
   const { project , onUserInput , userDevices } = props;
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      const usersCollection = collection(db, "users");
-      const q = query(usersCollection, where("fitbitData", "!=", null));
-      const querySnapshot = await getDocs(q);
-      setUsers(querySnapshot.docs.map(doc => doc.data()));
-    };
-
-    fetchUsers();
+    fetchFitBitUsers().then((users) => {
+      setUsers(users);
+    }).catch((error) => {
+      console.log(error);
+    });
   }, []);
 
+
+  // handle checkbox change
   const handleCheckboxChange = (user, isChecked) => {
     onUserInput(user, isChecked);
   };
@@ -25,7 +23,7 @@ function DevicesPanel(props) {
   return (
     <React.Fragment>
       <FormGroup>
-        {users.map((user, index) => (
+        {users?.map((user, index) => (
           <FormControlLabel 
           key={index} 
           control={
