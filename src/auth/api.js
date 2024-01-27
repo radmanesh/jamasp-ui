@@ -191,13 +191,15 @@ const fetchFitbitApiData = async ({ project, updateResponses, updateRateLimits }
 				// get Fitbit-Rate-Limit-Limit from response headers
 				try {
 					rateLimit = {
-						rateLimit: result.value.headers['Fitbit-Rate-Limit-Limit'],
-						rateLimitRemaining: result.value.headers['Fitbit-Rate-Limit-Remaining'],
-						rateLimitReset: result.value.headers['Fitbit-Rate-Limit-Reset']
+						rateLimit: result.headers['Fitbit-Rate-Limit-Limit'],
+						rateLimitRemaining: result.headers['Fitbit-Rate-Limit-Remaining'],
+						rateLimitReset: result.headers['Fitbit-Rate-Limit-Reset']
 					};
+					updateRateLimits(rateLimit);
+					console.log("rateLimit: ", rateLimit);
 				} catch (error) {
 					console.log("error: ", error);
-					console.log("result.value.headers: ", result.value.headers);
+					console.log("result.headers: ", result.headers);
 				}
 				data.push(result.value.data);
 			}

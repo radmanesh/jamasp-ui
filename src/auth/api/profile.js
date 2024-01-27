@@ -2,7 +2,7 @@ import axios from "axios";
 import { downloadSensors, generateSensorSettings } from "../../admin/utils/sensorsDownload";
 import { fetchFitbitApiEndpont } from "../api";
 
-const fetchUserProfile = async (user) => {
+const fetchUserProfile = (user) => {
   const getProfileEndpoint = downloadSensors.find((sensor) => sensor.id === 'Get_User_Profile');
   console.log("fetchUserPrile", getProfileEndpoint);
   const profileEndpointSettings = generateSensorSettings(getProfileEndpoint);
@@ -11,6 +11,7 @@ const fetchUserProfile = async (user) => {
     return response.data;
   }).catch((error) => {
     console.log("error", error);
+    return null;
   });
 };
 

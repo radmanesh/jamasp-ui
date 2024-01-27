@@ -12,7 +12,7 @@ const Dashboard = () => {
 
 
   // This is a demonstration for requesting data scopes
-  // Could for fetching should be placed in a separate file.
+  // Code for fetching should be placed in a separate file.
   React.useEffect(() => {
     if (loading) {  // if auth state is loading
       // maybe trigger a loading screen
