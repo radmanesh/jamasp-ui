@@ -29,12 +29,6 @@ const fitbitApiBaseUrl = 'https://api.fitbit.com';
  * @returns {string} The generated API endpoint URL.
  */
 function generateAPIEndpointFromDownloadSettings(sensor, sensorSettings) {
-	console.log("sensor: ", sensor);
-	console.log("sensorSettings: ", sensorSettings);
-	console.log("sensorSettings.arguments: ", sensorSettings.arguments.length);
-
-	//const element = sensorSettingsTemplate.arguments.find(arg => Object.keys(arg)[0] === keyToFind);
-
 	let apiParams = Object.assign({}, ...sensor.arguments.map((arg, index) => {
 		console.log("arg: ", arg);
 		let value = sensorSettings.arguments[arg.name] ? sensorSettings.arguments[arg.name] : sensor.defaultValues[index];
@@ -45,7 +39,7 @@ function generateAPIEndpointFromDownloadSettings(sensor, sensorSettings) {
 	}));
 
 	const endpointUrl = fitbitApiBaseUrl + sensor.link.replace(/\[(.*?)\]/g, (match, p1) => apiParams[p1]);
-	console.log("result", endpointUrl);
+	//console.log("result", endpointUrl);
 
 	return endpointUrl;
 }
@@ -58,15 +52,15 @@ function generateAPIEndpointFromDownloadSettings(sensor, sensorSettings) {
  * @returns {object} The Axios configuration object.
  */
 function generateAxiosConfigFromDownloadSettings(fitibitToken, sensor, sensorSettings) {
+	//console.log("sensorSettings: ", sensorSettings);
 	const config = {
 		headers: { Authorization: `Bearer ${fitibitToken.access_token}` },
 	};
-	if (sensorSettings !== null && sensorSettings !== undefined && sensorSettings.parameters && sensorSettings.parameters.length > 0	) {
-		sensorSettings.parameters.forEach((param) => {
-			config.params = { ...config.params, ...param };
-		});
+	if (sensorSettings !== null && sensorSettings !== undefined && sensorSettings.parameters) {
+		for (const [key, value] of Object.entries(sensorSettings.parameters)) {
+			config.params = { ...config.params, [key]: value };
+		}
 	}
-	console.log("config: ", config);
 	return config;
 }
 
@@ -110,20 +104,20 @@ const generateAxiosConfig = (fitibitToken, sensor) => {
 			config.params = { ...config.params, ...param };
 		});
 	}
-	console.log("config: ", config);
+	//console.log("config: ", config);
 	return config;
 }
 
 
 const fetchFitbitApiEndpont = async (fitbitToken, edndpoint, endpointSettings) => {
-	const endpointUrl ={ endpointUrl: generateAPIEndpointFromDownloadSettings(edndpoint, endpointSettings) , axiosConfig: generateAxiosConfigFromDownloadSettings(fitbitToken, edndpoint, endpointSettings) };
+	const endpointUrl = { endpointUrl: generateAPIEndpointFromDownloadSettings(edndpoint, endpointSettings), axiosConfig: generateAxiosConfigFromDownloadSettings(fitbitToken, edndpoint, endpointSettings) };
 	console.log("endpointUrl: ", endpointUrl);
 	axios.get(endpointUrl.endpointUrl, endpointUrl.axiosConfig).then((result) => {
 		console.log("result: ", result);
-		return {status: result.status, data: result.data}
+		return { status: result.status, data: result.data }
 	}).catch((error) => {
 		console.log("error: ", error);
-		return {status: error.response.status, data: error.response.data}
+		return { status: error.response.status, data: error.response.data }
 	});
 }
 
@@ -134,7 +128,7 @@ const fetchFitbitApiEndpont = async (fitbitToken, edndpoint, endpointSettings) =
  * @param {Function} options.updateResponses - The function to update the responses with the fetched data.
  * @returns {Promise<Array>} - A promise that resolves to an array of fetched data.
  */
-const fetchFitbitApiData = async ({ project, updateResponses, updateRateLimits }) => {
+const fetchFitbitApiData = async ({ project, updateResponses, updateRateLimits, setLog }) => {
 	console.log({ "project": project });
 	if (!project) {
 		console.error('No Fitbit token was provided.');
@@ -144,73 +138,81 @@ const fetchFitbitApiData = async ({ project, updateResponses, updateRateLimits }
 	const apiEndpoints = [];
 	for (const device of project.devices) {
 		const deviceGoogleUserId = await getUserIdByFitbitId(device);
-		console.log("deviceGoogleUserId: ", deviceGoogleUserId);
 		const fitbitToken = await getFitbitAuthState(deviceGoogleUserId);
-		console.log("fitbitToken: ", fitbitToken);
-		console.log("project.downloadSettings: ", project.downloadSettings);
+		//console.log("deviceGoogleUserId: ", deviceGoogleUserId);		
+		//console.log("fitbitToken: ", fitbitToken);
+		//console.log("project.downloadSettings: ", project.downloadSettings);
 
 		const sensorsToDownload = downloadSensors.filter(sensor =>
-			project.downloadSettings.some(setting => setting.sensorId === sensor.id)
+			project.downloadSettings.some(setting => setting.sensorId === sensor.id && setting.enabled)
 		);
-		console.log("sensorsToDownload: ", sensorsToDownload);
+		//console.log("sensorsToDownload: ", sensorsToDownload);
 
 		sensorsToDownload.forEach((sensor) => {
+			const updatedSettings = project.downloadSettings.find(sd => sd.sensorId === sensor.id);
+			updatedSettings.arguments['user-id'] = device;
 			const apiEndpoint = {
-				//endpointUrl: generateAPIEndpoint(sensor, { 'user-id': device, 'start-date': project.settings.dateRange.from, 'end-date': project.settings.dateRange.to, 'detail-level': project.settings.detailLevel }),
-				endpointUrl: generateAPIEndpointFromDownloadSettings(sensor, project.downloadSettings.find(sd => sd.sensorId === sensor.id)),
-				axiosConfig: generateAxiosConfigFromDownloadSettings(fitbitToken, sensor, project.downloadSettings.find(sd => sd.sensorId === sensor.id))
+				sensor: sensor.label,
+				endpointUrl: generateAPIEndpointFromDownloadSettings(sensor, updatedSettings),
+				axiosConfig: generateAxiosConfigFromDownloadSettings(fitbitToken, sensor, updatedSettings),
+				projectId: project?.id ? project.id : 'null',
+				date: new Date(),
+				user_id: deviceGoogleUserId,
+				device_id: device,
 			};
 			apiEndpoints.push(apiEndpoint);
 		});
 	}
 	console.log("apiEndpoints: ", apiEndpoints);
 
-	const requests = [];
+	const requestsObjectArray = []
 	apiEndpoints.forEach((endpoint) => {
-		requests.push(axios.get(endpoint.endpointUrl, endpoint.axiosConfig));
+		requestsObjectArray.push({
+			endpoint: endpoint,
+			axios_response: axios.get(endpoint.endpointUrl, endpoint.axiosConfig)
+		});
 	});
-
+	const apiRequestsPromises = requestsObjectArray.map((requestObject) => requestObject.axios_response);
+	const responseData = requestsObjectArray.map((requestObject) => {
+		return {
+			request: {
+				device_id: requestObject.endpoint.device_id,
+				sensor: requestObject.endpoint.sensor,
+				endpointUrl: requestObject.endpoint.endpointUrl,
+				date: requestObject.endpoint.date,
+			},
+			response: {
+				status: 'pending',
+				data: null
+			}
+		}
+	});
+	console.log("requestsObjectArray: ", requestsObjectArray);
 
 	// Use Promise.allSettled to make sure all requests are completed
-	Promise.allSettled(requests).then((results) => {
-		console.log("results: ", results);
-		const apiRequestLogDBI =  {
-			projectId: project.id,
-			userId: project.userId,
-			date: new Date(),
-			projectName: project.name,
-			downloadSettings: project.downloadSettings,
-			devices: project.devices,
-			requests: [], //requests.
-			responses: [] //results.
-		};
-		const data = [];
-		let rateLimit = {};
-		results.forEach((result) => {
-			if (result.status === 'fulfilled') {
-				// get Fitbit-Rate-Limit-Limit from response headers
-				try {
-					rateLimit = {
-						rateLimit: result.headers['Fitbit-Rate-Limit-Limit'],
-						rateLimitRemaining: result.headers['Fitbit-Rate-Limit-Remaining'],
-						rateLimitReset: result.headers['Fitbit-Rate-Limit-Reset']
-					};
-					updateRateLimits(rateLimit);
-					console.log("rateLimit: ", rateLimit);
-				} catch (error) {
-					console.log("error: ", error);
-					console.log("result.headers: ", result.headers);
-				}
-				data.push(result.value.data);
+	Promise.allSettled(apiRequestsPromises).then((results) => {
+		//console.log("results: ", results);
+		results.forEach((result, index) => {
+			console.log("result: ", result);
+			try {
+				requestsObjectArray[index].axios_response = (result.status === 'fulfilled' ? result.value.data : result.reason.response.data.errors);
+				responseData[index].response = {
+					status: result.status,
+					data: requestsObjectArray[index].axios_response
+				};
+				setLog(requestsObjectArray[index]).catch((err) => {
+					console.log("result: ", result);
+					console.log("setting Log error: ", err);
+				});
+			} catch (error) {
+				console.log("setting Log error: ", error);
 			}
 		});
-		// save rate limit to firestore
-		console.log("rateLimit: ", rateLimit);
-		console.log("data: ", data);
-		updateResponses(data);
-		return data;
+		console.log("fetch promise all settled", requestsObjectArray);
+		updateResponses(responseData);
 	});
-
+	console.log("here is after promise function:, ", requestsObjectArray);
+	return responseData;
 }
 
 /**
@@ -238,4 +240,4 @@ async function getOrRenewAccessToken(type, code, verifier) {
 	localStorage.setItem('last_saved_time', Date.now());
 	return tokenInfo.data;
 }
-export { getOrRenewAccessToken, fetchFitbitApiData as fetchFibbitApiData, generateAPIEndpoint, generateAxiosConfig , fetchFitbitApiEndpont };
+export { getOrRenewAccessToken, fetchFitbitApiData as fetchFibbitApiData, generateAPIEndpoint, generateAxiosConfig, fetchFitbitApiEndpont };

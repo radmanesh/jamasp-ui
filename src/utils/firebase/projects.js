@@ -1,6 +1,5 @@
-import { projectID } from 'firebase-functions/params';
-import { app, db, auth } from '/firebase';
 import { serverTimestamp } from 'firebase/firestore';
+import { db } from '/firebase';
 
 const updateRateLimit = (uid, rateLimit) => {
   console.log("updateRateLimit: ", uid, rateLimit);
@@ -8,7 +7,7 @@ const updateRateLimit = (uid, rateLimit) => {
   //   rateLimit: rateLimit
   // })
 }
-const createAPIEndpoinLogPendingEndtry = async (project, device, endpoint , sensor, sensorDownloadSettong ,axioConfig, uuid, uid) => {
+const createAPIEndpoinLogPendingEntry = async (project, device, endpoint , sensor, sensorDownloadSettong ,axioConfig, uuid, uid) => {
   // const apiRequestLogDBI =  {
   //   projectId: project.id,
   //   projectOwnerId: project.userId,
@@ -33,7 +32,7 @@ const createAPIEndpoinLogPendingEndtry = async (project, device, endpoint , sens
     timestamp: serverTimestamp(),
     axioConfig: axioConfig 
   }
-  let apiLogRef = db.commection('apiLogs').doc();
+  let apiLogRef = db.collection('api_logs').doc();
   await apiLogRef.set(apiEndopintLog);
   return apiLogRef;
 }

@@ -25,13 +25,13 @@ async function removeDevice(userId) {
     var docRef;
     if (querySnapshot.size === 0) {
       // the user has nev
-      console.log("No such document!");
+      console.error("No such document!", userId);
       return null;
     } else {
       docRef = querySnapshot.docs[0];
     }
     const usr = docRef.data();
-    console.log("usr", usr);
+    //console.log("usr", usr);
     if (!usr) {
       console.error("userObj is null");
       return null;
@@ -42,7 +42,6 @@ async function removeDevice(userId) {
       const userRef = doc(db, 'users', docRef.id);
       const updaredUesr = await updateDoc(userRef, {fitbitData:deleteField()});
       console.log("new", updaredUesr);
-
     }
   } catch (e) {
     console.error("Error adding document: ", e);
@@ -50,43 +49,44 @@ async function removeDevice(userId) {
   }
 }
 
-const refreshFitbitToken = async function(userId) {
+const refreshFitbitToken = function(userId) {
   try {
     const q = query(collection(db, "users"), where("uid", "==", userId));
-    const querySnapshot = await getDocs(q);
-    var docRef;
-    if (querySnapshot.size === 0) {
-      // the user has nev
-      console.log("No such document!");
+    getDocs(q).then((querySnapshot) => {
+      var docRef;
+      if (querySnapshot.size === 0) {
+        // the user has nev
+        console.log("No such document!");
+        return null;
+      } else {
+        docRef = querySnapshot.docs[0];
+      }
+      const usr = docRef.data();
+      console.log("usr", usr);
+      if (!usr) {
+        console.error("userObj is null");
+        return null;
+      } else {
+        const token = usr.fitbitData;
+        getOrRenewAccessToken('renew', token.refresh_token, token.code_verifier).then((newToken) => {
+          if (newToken?.access_token) {
+            storeFitbitToken(userId, newToken).then((res) => {
+              console.log("newToken is stored" , res);
+              return newToken;
+            });;
+          } else {  
+            console.log("newToken is null");
+          }
+        }).catch((err) => {
+          console.error("Error getting user data: ", err);
+        });
+        return null;
+      }
+    }).catch((err) => {
+      console.error("Error adding document: ", err);
       return null;
-    } else {
-      docRef = querySnapshot.docs[0];
-    }
-    const usr = docRef.data();
-    console.log("usr", usr);
-    if (!usr) {
-      console.error("userObj is null");
-      return null;
-    } else {
-      const token = usr.fitbitData;
-      getOrRenewAccessToken('renew', token.refresh_token, token.code_verifier).then((newToken) => {
-        if (newToken?.access_token) {
-          storeFitbitToken(userId, newToken).then((res) => {
-            console.log("newToken is stored" , res);
-            return newToken;
-          });;
-        } else {  
-          console.log("newToken is null");
-        }
-      }).catch((err) => {
-        console.error("Error adding document: ", err);
-      });
-      return null;
+    });
 
-      // const { fitbitData, ...newUser } = usr;
-      // console.log("new", newUser);
-      
-    }
   } catch (e) {
     console.error("Error adding document: ", e);
     return null;

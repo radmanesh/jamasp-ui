@@ -9,7 +9,6 @@ const downloadSensors = [
       { name: 'start-date', type: 'date', defaultValue: '2024-01-01' },
       { name: 'end-date', type: 'date', defaultValue: '2024-01-01' },
       { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '1min' },
-      { name: 'boolean-type', type: 'boolean', defaultValue: true }
     ],
     parameters: [
       { name: 'timezone', type: 'select', values: ['UTC'], defaultValue: 'UTC' }
@@ -174,23 +173,6 @@ const downloadSensors = [
     arguments: [
       { name: 'user-id', type: 'text', defaultValue: '-' }
     ],
-    //parameters: ['beforeDate', 'afterDate', 'sort', 'offset', 'limit']
-    parameters: [
-      { name: 'beforeDate', type: 'date', defaultValue: '2024-01-01' },
-      { name: 'sort', type: 'hidden', defaultValue: 'desc' },
-      { name: 'offset', type: 'number', defaultValue: 0 },
-      { name: 'limit', type: 'number', defaultValue: 100 }
-    ]
-  },
-  {
-    id: "Activity_Log_List",
-    label: "Activity Log List",
-    link: "/1/user/[user-id]/activities/list.json",
-    description: "Retrieves a list of a user's activity log entries before or after a given day.",
-    arguments: [
-      { name: 'user-id', type: 'text', defaultValue: '-' }
-    ],
-    //parameters: ['beforeDate', 'afterDate', 'sort', 'offset', 'limit']
     parameters: [
       { name: 'beforeDate', type: 'date', defaultValue: '2024-01-01' },
       { name: 'sort', type: 'hidden', defaultValue: 'desc' },
@@ -299,19 +281,19 @@ const downloadSensors = [
       { name: 'limit', type: 'number', defaultValue: 100 }
     ]
   },
-  {
-    id:"Get_Activity_Tcx",
-    label: "Get Activity TCX",
-    description: "Retrieves a user's activity details in TCX format.",
-    link: "/1/user/[user-id]/activities/[log-id].tcx",
-    arguments: [
-      { name: 'user-id', type: 'text', defaultValue: '-' },
-      { name: 'log-id', type: 'text', defaultValue: '' }
-    ],
-    parameters: [
-      { name: 'includePartialTCX', type: 'boolean', defaultValue: true }
-    ]
-  },
+  // {
+  //   id:"Get_Activity_Tcx",
+  //   label: "Get Activity TCX",
+  //   description: "Retrieves a user's activity details in TCX format.",
+  //   link: "/1/user/[user-id]/activities/[log-id].tcx",
+  //   arguments: [
+  //     { name: 'user-id', type: 'text', defaultValue: '-' },
+  //     { name: 'log-id', type: 'text', defaultValue: ' ' }
+  //   ],
+  //   parameters: [
+  //     { name: 'includePartialTCX', type: 'boolean', defaultValue: true }
+  //   ]
+  // },
   {
     id:"Get_Daily_Activity_Summary",
     label: "Get Daily Activity Summary",
@@ -522,7 +504,8 @@ const downloadSensors = [
     description:"Retrieves the user's profile data.",
     link:"/1/user/[user-id]/profile.json",
     arguments:[
-      { name: 'user-id', type: 'text', defaultValue: '-' }
+      { name: 'user-id', type: 'text', defaultValue: '-' },
+      { name: 'start-date', type: 'date',  defaultValue: '2023-12-10'}
     ],
     parameters:[]
   }
