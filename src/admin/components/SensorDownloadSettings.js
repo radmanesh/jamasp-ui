@@ -43,7 +43,7 @@ function SettingItem({ item, index, sensor, handleChange, itemSetting, settingTy
  * @returns 
  */
 function SensorDownloadSettings({ sensor, sensorSettings, handleSettingsChange, handleRemoveSensor, project }) {
-  console.log("SensorDownloadSettings",sensorSettings)
+  //console.log("SensorDownloadSettings",sensorSettings)
   if (!sensor) {
     return (
       <Box key={"no-applicable-key"+Date.now()}>

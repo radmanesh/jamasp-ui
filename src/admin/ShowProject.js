@@ -11,6 +11,7 @@ import DownloadPanel from './DownloadPanel';
 import { ProjectTabPanel } from './ProjectTabPanel';
 import SensorsPanel from './SensorsPanel';
 import { generateSensorSettings, downloadSensors as sensorsList } from './utils/sensorsDownload';
+import addApiLog from '../utils/firebase/apiLog';
 
 /**
  * Renders the ShowProject component.
@@ -48,9 +49,9 @@ const ShowProject = () => {
 
 
   useEffect(() => {
-    console.log("at the start of show project ");
-    console.log("user: ", user);
-    console.log("loading: ", loading);
+    //console.log("at the start of show project ");
+    //console.log("user: ", user);
+    //console.log("loading: ", loading);
   }, []);
 
   /**
@@ -80,25 +81,26 @@ const ShowProject = () => {
    * @return {void}
    */
   useEffect(() => {
+    setIsLoading(true);
     const query = doc(db, "projects", projectId);
 
     const unsubscribe = onSnapshot(query, (doc) => {
       if (doc.exists()) {
-        setIsLoading(true);
         setProject(doc.data());
-        console.log('project found:', doc.data());
+        //console.log('project found:', doc.data());
         setUserDevices(doc.data().devices);
         setUserSensors(doc.data().sensors);
         setUserSettings(doc.data().settings);
         setSensorsName(doc.data()?.downloadSettings?.filter((s) => s.enabled).map((s) => s.sensorId));
         setSensorsSettings(doc.data().downloadSettings);
-        setIsLoading(false);
         //console.log(userDevices, userSensors, userSettings);
       } else {
         setAlert({ type: 'error', message: `Project with id: ${projectId} could not be found!` });
         setProject(null);
       }
     });
+
+    setIsLoading(false);
 
     return unsubscribe;
   }, [projectId]);
@@ -153,7 +155,7 @@ const ShowProject = () => {
    * @return {void}
    */
   const handleDateChange = (name, value) => {
-    console.log(name, value, value.type);
+    //console.log(name, value, value.type);
     setUserSettings({
       ...userSettings,
       dateRange: {
@@ -187,8 +189,12 @@ const ShowProject = () => {
         sensors: userSensors,
         settings: userSettings,
         downloadSettings: sensorsSettings,
-        updatedAt: Timestamp.now(),
+        updatedAt: Timestamp.now()
       }
+      if (updatedProject?.id === undefined) {
+        updatedProject.id = projectId;
+      }
+
       console.log("updatedProject: ", updatedProject);
       const projectRef = doc(db, "projects", projectId);
       updateDoc(projectRef, updatedProject).then(() => {
@@ -214,22 +220,23 @@ const ShowProject = () => {
    */
   const handlePrepareDownload = async () => {
     setIsLoading(true);
-    console.log("handleDownload", project, user);
+    //console.log("handleDownload", project, user);
+    // const fitbitToken = await getFitbitAuthState(ownerUserId);
     // const ownerUserId = await getUserIdByFitbitId('BPCPPB');
     // console.log("ownerUserId", ownerUserId);
-    // const fitbitToken = await getFitbitAuthState(ownerUserId);
     // console.log("fitbitToken", fitbitToken);
-    const responses = await fetchFibbitApiData({ project: project, updateResponses: setApiResponse });
-    console.log("result: ", responses);
-    if (responses) {
-      responses.forEach(element => {
-        console.log(element);
-        console.log(typeof element);
-      });
-    }
+    Promise.allSettled(fetchFibbitApiData({ project: project, updateResponses: setApiResponse, setLog: addApiLog })).then((results) => {
+      console.log("results: ", results);
+      setIsLoading(false);
+    }).catch((error) => {
+      console.error("Error fetching data: ", error);
+      setIsLoading(false);
+    });
+    //;
+    //const responses = await fetchFibbitApiData({ project: project, updateResponses: setApiResponse, setLog: addApiLog });
+    //console.log("result: ", responses);
     //const jsonOutput = handleGenerateJsonDownload(result, `${project.name}-${Date.now()}.json`);
     //console.log("jsonOutput: ", jsonOutput);
-    setIsLoading(false);
   }
 
   const handleGenerateJsonDownload = (data, fileName) => {
@@ -304,9 +311,20 @@ const ShowProject = () => {
 
       {apiResponse &&
         <Paper elevation={3} sx={{ p: 2, mb: 2 }}>
-          <Typography variant="h6">API Responses</Typography>
-          <pre>Number of responses: {apiResponse.length}</pre>
-          <Button variant="contained" color="secondary" onClick={() => handleGenerateJsonDownload(apiResponse, `${project.name}-${Date.now()}`)}>Download</Button>
+          <Typography variant="h5">API Responses</Typography>
+          {loading && <LinearProgress />}
+          <pre key={new Date().getTime()}>Number of responses: {loading ? 'Loading...' : apiResponse.length}</pre>
+          {loading && <LinearProgress />}
+          {!loading && apiResponse.length > 0 && apiResponse.map((response, index) => (
+            <Paper elevation={3} sx={{ p: 2, mb: 2 }}>
+              <Typography variant="h6">Response {index + 1}</Typography>
+              <Typography variant='caption' component="span" key={new Date().getTime()}><pre>{JSON.stringify(response, null, 2).slice(0, 500)}</pre></Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Button edge="end" variant="outlined" color="success" size='small' onClick={() => handleGenerateJsonDownload(response, `${Date.now()}`)} sx={{}}>Download</Button>
+              </Box>
+            </Paper>
+          ))}
+          <Button disabled={loading} loading variant="contained" color="success" onClick={() => handleGenerateJsonDownload(apiResponse, `${project.name}-${Date.now()}`)} sx={{}} >Download All</Button>
         </Paper>
       }
 

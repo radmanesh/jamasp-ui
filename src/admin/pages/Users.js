@@ -11,7 +11,7 @@ const Users = () => {
   // Fetch users on mount
   useEffect(() => {
     fetchFitBitUsers().then((users) => {
-      console.log("users", users);
+      //console.log("users", users);
       setUsers(users);
     }).catch((error) => {
       console.log(error);
@@ -20,7 +20,7 @@ const Users = () => {
 
   // Refresh users data
   useEffect(() => {
-    console.log("users", users);
+    //console.log("users", users);
 
   }, [users]);
 
@@ -36,7 +36,7 @@ const Users = () => {
       <List>
         {users.map((user) => (
           <ListItem
-              key={user.id}
+              key={user.uid}
               disablePadding
               secondaryAction={<Button edge="end" variant="contained" color="success" onClick={() =>  refreshUsersData(user.uid)}>Refresh</Button>}
             >

@@ -55,7 +55,7 @@ function DownloadPanel(props) {
         return item;
       });
     }
-    console.log("setting new settings", sensorsSettings, newSettings);
+    //console.log("setting new settings", sensorsSettings, newSettings);
     setSensorsSettings(newSettings);
   }
 
@@ -65,7 +65,7 @@ function DownloadPanel(props) {
    * @param {*} name  sensor name
    */
   const handleChange = (event) => {
-    console.log("handleChange", event);
+    //console.log("handleChange", event);
     const {
       target: { value },
     } = event;

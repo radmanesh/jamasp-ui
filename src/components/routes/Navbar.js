@@ -2,6 +2,7 @@ import { AppBar, Avatar, Box, Button, Container, IconButton, Menu, MenuItem, Too
 import { Menu as MenuIcon } from '@mui/icons-material';
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { logout } from '../../firebase';
 
 
 
@@ -25,14 +26,25 @@ function Navbar({ user, loading }) {
 
   const handleCloseNavMenu = (event, path) => {
     //console.log("Close navMenu event", event)
-    //console.log(" path ", path)
+    console.log(" path ", path)
     setAnchorElNav(null);
     navigate(path);
   };
 
   const handleCloseUserMenu = (event, path) => {
-    //console.log("Close userMenu event", event)
+    console.log("Close userMenu event", event,path)
     setAnchorElUser(null);
+    if(path === 'backdropClick' || path === 'escapeKeyDown'){
+      return;
+    }
+    //console.log(" path ", path)
+    if(path === '/auth/signout'){
+      logout();
+      navigate('/auth/signin', { replace: true });
+    }
+    if(path === '/profile'){
+      navigate(path);
+    }
     navigate(path);
   };
 

@@ -1,15 +1,17 @@
 import { Box, Button, Container, TextField, Typography } from '@mui/material';
-import React from 'react';
+import React, { useContext } from 'react';
 import { db } from '../firebase';
 import { useNavigate } from 'react-router-dom';
-import { Timestamp, collection } from 'firebase/firestore';
+import { Timestamp, collection, doc, updateDoc } from 'firebase/firestore';
 import { addDoc } from 'firebase/firestore';
 import { getAllSensorsId } from './utils/utils';
 import { getAllFitbitUsersId } from '../utils/firebase/users';
+import { AuthContext } from '../auth/AuthContext';
 
 // Create a new project
 
 const NewProject = () => {
+  const {user , loading} = useContext(AuthContext);
 
   const navigate = useNavigate();
 
@@ -40,12 +42,22 @@ const NewProject = () => {
         ],
         createdAt: Timestamp.now(),
         updatedAt: Timestamp.now(),
+        createdBy: user?.uid
       };
       //console.log(projectDoc);
 
       addDoc(collection(db, "projects"), projectDoc).then((docRef) => {
         const projectId = docRef.id;
-        console.log("Project added to Firestore with ID:", projectId, projectDoc);
+        const updateProjectDoc = doc(db, "projects", projectId);
+        updateDoc(updateProjectDoc, {
+          id: projectId,
+        }).then(() => {
+          //console.log("Project updated with ID:", projectId);
+          navigate(`/admin/showProject/${projectId}`);
+        }).catch((error) => {
+          //TODO: Handle error properly
+          console.error("Error updating project:", error);
+        });
         // Redirect to the project page
         navigate(`/admin/showProject/${projectId}`);
       });

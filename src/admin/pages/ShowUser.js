@@ -30,7 +30,7 @@ function ShowUser(props) {
   useEffect(() => {
     setIsLoading(true);
     fettchFitBitUser(userId).then((user) => {
-      console.log('showUser: userFound:', user);
+      //console.log('showUser: userFound:', user);
       if (isArray(user)) {
         user = user[0];
       }
@@ -42,7 +42,7 @@ function ShowUser(props) {
           }
         }).then((result) => {
           if (result.status === 200 && result?.data?.user) {
-            console.log(result.data.user);
+            //console.log(result.data.user);
             // update the user profile
             setUserProfile(result.data.user);
             axios.get('https://api.fitbit.com/1/user/-/devices.json', {
@@ -51,12 +51,12 @@ function ShowUser(props) {
               }
             }).then((result) => {
               if (result.status === 200 && result?.data) {
-                console.log(result.data);
+                //console.log(result.data);
                 // update the user profile
                 setUserDevices(result.data);
               }
             }).catch((error) => {
-              console.log(error);
+              console.error(error);
             });
           }
         }).catch((error) => {

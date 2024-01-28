@@ -50,5 +50,6 @@
       "enabled": true
     },
     "singleProjectMode": true
+    "singleProjectMode": false
   }
 }

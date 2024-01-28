@@ -27,7 +27,7 @@ const AdminDashboard = () => {
       projectName = projects.filter((project) => project.id === projectId).at(0).name;
       console.log(`Deleting project ${projectName} with id: ${projectId}`);
       deleteDoc(doc(db, "projects", projectId)).then(() => {
-        console.log(`Project with id: ${projectId} deleted successfully`);
+        //console.log(`Project with id: ${projectId} deleted successfully`);
         setProjects(projects.filter((project) => project.id !== projectId));
         setAlert({ type: 'success', message: `Project ${projectName} with id: ${projectId} deleted successfully` });
         setTimeout(() => setAlert(null), 5000); // Hide the alert after 5 seconds

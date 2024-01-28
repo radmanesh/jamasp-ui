@@ -11,9 +11,9 @@ import { fitbit } from '../utils/settings';
  * @returns {void}
  */
 export async function storeFitbitToken(userId, token) {
-  console.log("storeFitbitToken");
-  console.log(userId);
-  console.log(token);
+  //console.log("storeFitbitToken");
+  //console.log(userId);
+  //console.log(token);
   if (!token.user_id) {
     console.log("token.user_id is null");
     alert("token.user_id is null");
@@ -48,7 +48,8 @@ export async function storeFitbitToken(userId, token) {
       // Handle error
     }
   }
-}// const apiEndpoint = 'https://api.fitbit.com/oauth2/token';
+}
+// const apiEndpoint = 'https://api.fitbit.com/oauth2/token';
 /**
  * Generates a random integer within a specified range.
  * @param {number} range - The range within which the random integer should be generated.
