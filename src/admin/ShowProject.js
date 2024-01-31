@@ -1,17 +1,19 @@
-import { Alert, Box, Button, Container, LinearProgress, Paper, Stack, Tab, Tabs, Typography } from '@mui/material';
+import { GetApp, List } from '@mui/icons-material';
+import { Alert, Box, Button, Chip, Container, IconButton, LinearProgress, ListItem, ListSubheader, Paper, Stack, Tab, Tabs, Typography } from '@mui/material';
 import { Timestamp, doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import React, { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { AuthContext } from '../auth/AuthContext';
-import { fetchFibbitApiData } from '../auth/api';
+import { fetchFitbitApiData } from '../auth/api';
 import { db } from '../firebase';
+import addApiLog from '../utils/firebase/apiLog';
+import { checkAllTrue } from '../utils/utils';
 import DataSettingsPanel from './DataSettingsPanel';
 import DevicesPanel from './DevicesPanel';
 import DownloadPanel from './DownloadPanel';
 import { ProjectTabPanel } from './ProjectTabPanel';
 import SensorsPanel from './SensorsPanel';
 import { generateSensorSettings, downloadSensors as sensorsList } from './utils/sensorsDownload';
-import addApiLog from '../utils/firebase/apiLog';
 
 /**
  * Renders the ShowProject component.
@@ -46,6 +48,8 @@ const ShowProject = () => {
   const [apiResponse, setApiResponse] = useState(null);
   // User object from the AuthContext set in App.js
   const { user, loading } = useContext(AuthContext);
+
+  const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -99,11 +103,14 @@ const ShowProject = () => {
         setProject(null);
       }
     });
-
     setIsLoading(false);
-
     return unsubscribe;
   }, [projectId]);
+
+  async function renderResponses() {
+    // 
+    return (<></>);
+  }
 
   /**
    * Handles the user devices input.
@@ -196,12 +203,13 @@ const ShowProject = () => {
       }
 
       console.log("updatedProject: ", updatedProject);
-      const projectRef = doc(db, "projects", projectId);
-      updateDoc(projectRef, updatedProject).then(() => {
+      //const projectRef = doc(db, "projects", projectId);
+      updateDoc(doc(db, "projects", projectId), updatedProject).then(() => {
         setProject(updatedProject);
         setAlert({ type: 'success', message: `Project ${updatedProject.name} with id: ${projectId} updated successfully` });
         setTimeout(() => setAlert(null), 5000); // Hide the alert after 5 seconds
-        //console.log("Project updated successfully");
+        console.log("Project updated successfully");
+        setIsLoading(false);
       }).catch((error) => {
         setAlert({ type: 'error', message: `Project ${updatedProject.name} with id: ${projectId} could not be updated!!!!` });
         setTimeout(() => setAlert(null), 5000); // Hide the alert after 5 seconds
@@ -219,48 +227,51 @@ const ShowProject = () => {
    * Handle the download of the project as a JSON file.
    */
   const handlePrepareDownload = async () => {
-    setIsLoading(true);
-    //console.log("handleDownload", project, user);
-    // const fitbitToken = await getFitbitAuthState(ownerUserId);
-    // const ownerUserId = await getUserIdByFitbitId('BPCPPB');
-    // console.log("ownerUserId", ownerUserId);
-    // console.log("fitbitToken", fitbitToken);
-    Promise.allSettled(fetchFibbitApiData({ project: project, updateResponses: setApiResponse, setLog: addApiLog })).then((results) => {
-      console.log("results: ", results);
-      setIsLoading(false);
-    }).catch((error) => {
-      console.error("Error fetching data: ", error);
-      setIsLoading(false);
-    });
-    //;
-    //const responses = await fetchFibbitApiData({ project: project, updateResponses: setApiResponse, setLog: addApiLog });
-    //console.log("result: ", responses);
-    //const jsonOutput = handleGenerateJsonDownload(result, `${project.name}-${Date.now()}.json`);
-    //console.log("jsonOutput: ", jsonOutput);
+    if (isLoading || loading) {
+      setAlert({ type: 'error', message: `Please wait for the previous download to finish.` });
+      setTimeout(() => setAlert(null), 5000); // Hide the alert after 5 seconds
+    } else {
+      setIsLoading(true);
+      //console.log("handleDownload", project, user);
+      // const fitbitToken = await getFitbitAuthState(ownerUserId);
+      // const ownerUserId = await getUserIdByFitbitId('BPCPPB');
+      // console.log("ownerUserId", ownerUserId);
+      // console.log("fitbitToken", fitbitToken);
+      Promise.allSettled(fetchFitbitApiData({ project: project, updateResponses: setApiResponse, setLog: addApiLog })).then((results) => {
+        console.log("results: ", results);
+        setIsLoading(false);
+      }).catch((error) => {
+        console.error("Error fetching data: ", error);
+        setIsLoading(false);
+      });
+    }
   }
 
   const handleGenerateJsonDownload = (data, fileName) => {
-    // create file in browser
-    if (fileName === '') {
-      fileName = 'output.json';
-    }
-    const json = JSON.stringify(data, null, 2);
-    const blob = new Blob([json], { type: "application/json" });
-    const href = URL.createObjectURL(blob);
-
-    // create "a" HTLM element with href to file
-    const link = document.createElement("a");
-    link.href = href;
-    link.download = fileName + ".json";
-    document.body.appendChild(link);
-    link.click();
-
-    // clean up "a" element & remove ObjectURL
-    document.body.removeChild(link);
-    URL.revokeObjectURL(href);
-    return;
+    if (isLoading || loading) {
+      setAlert({ type: 'error', message: `Please wait for the previous download to finish.` });
+      setTimeout(() => setAlert(null), 5000); // Hide the alert after 5 seconds
+      return;
+    } else if (data !== null && data !== undefined && data.length > 0) {
+      // create file in browser
+      if (fileName === '') {
+        fileName = 'output.json';
+        const json = JSON.stringify(data, null, 2);
+        const blob = new Blob([json], { type: "application/json" });
+        const href = URL.createObjectURL(blob);
+        // create "a" HTLM element with href to file
+        const link = document.createElement("a");
+        link.href = href;
+        link.download = fileName + ".json";
+        document.body.appendChild(link);
+        link.click();
+        // clean up "a" element & remove ObjectURL
+        document.body.removeChild(link);
+        URL.revokeObjectURL(href);
+        return;
+      }
+    };
   };
-
   /**
    * Returns the accessibility properties for a tab.
    *
@@ -274,8 +285,6 @@ const ShowProject = () => {
     };
   }
 
-
-
   /**
    * Renders the project page.
    *
@@ -285,7 +294,7 @@ const ShowProject = () => {
     <Container maxWidth="lg">
       <Typography variant="h3">{project?.name}</Typography>
 
-      {isLoading && <LinearProgress />}
+      {checkAllTrue(loading, isLoading) && <LinearProgress />}
       {alert && <Alert severity={alert.type}>{alert.message}</Alert>}
 
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -310,21 +319,41 @@ const ShowProject = () => {
       </ProjectTabPanel>
 
       {apiResponse &&
-        <Paper elevation={3} sx={{ p: 2, mb: 2 }}>
+        <Paper elevation={2} sx={{ p: 2, mb: 2 }}>
           <Typography variant="h5">API Responses</Typography>
-          {loading && <LinearProgress />}
+          {(loading || isLoading) && <LinearProgress />}
           <pre key={new Date().getTime()}>Number of responses: {loading ? 'Loading...' : apiResponse.length}</pre>
-          {loading && <LinearProgress />}
-          {!loading && apiResponse.length > 0 && apiResponse.map((response, index) => (
-            <Paper elevation={3} sx={{ p: 2, mb: 2 }}>
+          {(loading || isLoading) && <LinearProgress />}
+          {checkAllTrue(!loading, !isLoading > 0 && apiResponse.length > 0) && apiResponse.map((response, index) => (
+            <Paper elevation={1} sx={{ p: 2, mb: 2 }} >
               <Typography variant="h6">Response {index + 1}</Typography>
-              <Typography variant='caption' component="span" key={new Date().getTime()}><pre>{JSON.stringify(response, null, 2).slice(0, 500)}</pre></Typography>
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <Button edge="end" variant="outlined" color="success" size='small' onClick={() => handleGenerateJsonDownload(response, `${Date.now()}`)} sx={{}}>Download</Button>
-              </Box>
+              <List>
+                {!loading && (
+                  <List
+                    sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+                    secondaryAction={<IconButton aria-label="comment"><GetApp sx={{ fontSize: 30 }} color="primary" /></IconButton>}
+                  >
+                    <ListItem>
+                      <Typography variant='caption' component="span" key={new Date().getTime()}><pre>{JSON.stringify(response, null, 2).slice(0, 500)}</pre></Typography>
+                      <Box sx={{ display: 'flex', justifyContent: 'flex-start', flexGrow: 1, 'white-space-wrap': 'break-word', 'white-space-wrap-break-wprd': 'break-word' }}>
+                        <Button edge="end" disabled={loading || isLoading} variant="outlined" color="success" size='small' onClick={() => handleGenerateJsonDownload(response, `${Date.now()}`)} sx={{}}>Download</Button>
+                      </Box>
+                      <Typography variant="body2">email: <Chip label={'TBI'} size="small" /> </Typography>
+                    </ListItem>
+                    <ListItem>
+                      <Button edge="end" variant="outlined" color="success" size='small' onClick={() => handleGenerateJsonDownload(response, `${Date.now()}`)} sx={{}}>Download</Button>
+                    </ListItem>
+                  </List>
+                )}
+              </List>
+              <List>
+                <ListItem>
+                  <Button edge="end" disabled={loading || isLoading} loading variant="contained" color="success" onClick={() => handleGenerateJsonDownload(apiResponse, `${project.name}-${Date.now()}`)} sx={{}} >Download All</Button>
+
+                </ListItem>
+              </List>
             </Paper>
           ))}
-          <Button disabled={loading} loading variant="contained" color="success" onClick={() => handleGenerateJsonDownload(apiResponse, `${project.name}-${Date.now()}`)} sx={{}} >Download All</Button>
         </Paper>
       }
 
@@ -334,7 +363,7 @@ const ShowProject = () => {
       </Stack>
 
 
-    </Container>
+    </Container >
 
   );
 };

@@ -1,8 +1,9 @@
-import { Alert, Button, Container, Grid, LinearProgress, List, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material';
+import { Alert, Container, LinearProgress, List, Typography } from '@mui/material';
 import { collection, deleteDoc, doc, onSnapshot } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
-import { auth, db } from '../firebase';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { auth, db } from '../firebase';
+import ProjectCard from './components/ProjectCard';
 
 const AdminDashboard = () => {
   const [projects, setProjects] = useState([]);
@@ -13,11 +14,14 @@ const AdminDashboard = () => {
 
   // Get all projects from the database
   useEffect(() => {
+    setIsLoading(true);
     const unsubscribe = onSnapshot(collection(db, 'projects'), (snapshot) => {
       setProjects(snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     });
+    setIsLoading(false);
     return unsubscribe;
   }, []);
+
 
 
   const handleDeleteProject = (projectId) => {
@@ -44,46 +48,39 @@ const AdminDashboard = () => {
     setIsLoading(false);
   }
 
+
+  const handleProjectAction = ({ project, action, data }) => {
+
+
+  }
+
   return (
     <Container sx={{ mt: 1 }}>
       <Typography variant="h3">Admin Dashboard</Typography>
       <Typography variant="body1">Welcome {auth?.currentUser?.displayName}! This is your dashboard where you can see your projects. </Typography>
       {isLoading && <LinearProgress />}
       {alert && <Alert severity={alert.type}>{alert.message}</Alert>}
-      {/* FIXME: What is this tag doing? if it's really doing something use the correct labels */}
-      <nav aria-label="secondary mailbox folders">
-        <List>
+      {!isLoading && projects.length === 0 && <Typography variant="body1">You have no projects.</Typography>}
+      {/* <Grid container spacing={2}>
+          {projects.map((project) => (
+            <Grid item xs={12} lg={6} key={project.id}>
+              <ProjectCard key={project.id} project={project} handleDeleteProject={handleDeleteProject} handlePorjectAction={handleProjectAction} />
+            </Grid>
+          ))}
+        </Grid> */}
+      {!isLoading && projects.length > 0 && (
+        <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
           {projects.map((project) => {
             return (
-              <ListItem
-                key={project.id}
-                disablePadding
-                secondaryAction={<Button edge="end" variant="contained" color="error" onClick={() => handleDeleteProject(project.id)}>Delete</Button>}
-              >
-                <ListItemButton component="a" href={`/admin/showProject/${project.id}`}>
-                  <ListItemText primary={project.name} />
-                </ListItemButton>
-              </ListItem>
+              <ProjectCard key={project.id} project={project} handleDeleteProject={handleDeleteProject} handlePorjectAction={handleProjectAction} />
             );
           })}
         </List>
-      </nav>
 
-      <Grid
-        container
-        direction="row"
-        justifyContent="flex-end"
-        alignItems="center"
-      >
-        <Grid item>
-          {/* <Button variant="contained" href="/admin/newProject">New Project</Button> */}
-          <Button variant="contained" onClick={(e) => navigate("/admin/newProject")} href="/admin/newProject">New Project</Button>
-        </Grid>
-      </Grid>
-
+      )}
     </Container>
 
-  );
+  )
 };
 
 export default AdminDashboard;

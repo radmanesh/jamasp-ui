@@ -240,4 +240,4 @@ async function getOrRenewAccessToken(type, code, verifier) {
 	localStorage.setItem('last_saved_time', Date.now());
 	return tokenInfo.data;
 }
-export { getOrRenewAccessToken, fetchFitbitApiData as fetchFibbitApiData, generateAPIEndpoint, generateAxiosConfig, fetchFitbitApiEndpont };
+export { getOrRenewAccessToken, fetchFitbitApiData , generateAPIEndpoint, generateAxiosConfig, fetchFitbitApiEndpont };
