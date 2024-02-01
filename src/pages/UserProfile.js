@@ -3,6 +3,7 @@ import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../auth/AuthContext';
 import { fettchFitBitUser as fetchFitBitUser } from '../utils/firebase/users';
+import { set } from 'lodash';
 
 function UserProfile(props) {
   const { user, loading } = useContext(AuthContext);
@@ -12,10 +13,12 @@ function UserProfile(props) {
   //const [alert, setAlert] = React.useState(null);
   // User devices
   const [userDevices, setUserDevices] = React.useState([]);
+  const [iLoding, setIsLoading] = React.useState(false);
 
   useEffect(() => {
     //console.log('UserProfile useEffect user', user, loading)
     if (user && !loading) {
+      setIsLoading(true);
       fetchFitBitUser(user.uid).then((usr) => {
         let jUser = usr[0];
         //console.log('UserProfile fetchFitBitUser', jUser , jUser.fitbitData);
@@ -55,6 +58,7 @@ function UserProfile(props) {
         console.log(error);
         //setAlert({ type: 'error', message: error.message });
       });
+      setIsLoading(false);
     }
   }, [user, loading]);
 
@@ -67,20 +71,21 @@ function UserProfile(props) {
       {!loading && (
         <>
           <Typography variant='h4'>User Profile</Typography>
-          <Typography variant='body1'>
+          <Typography variant='body1' component='div'>
             Name: <Chip label={user.displayName}></Chip>
           </Typography>
-          <Typography variant='body1'>
+          <Typography variant='body1' component='div'>
             Email: <Chip label={user.email}></Chip>
           </Typography>
-          <Typography variant='body1'>
+          <Typography variant='body1' component='div'>
             Joined on: <Chip label={jamaspUser?.createdAt?.toDate()?.toDateString()}></Chip>
           </Typography>
-          <Typography variant='body1'>
+          <Typography variant='body1' component='div'>
             Fitbit Timezone: <Chip label={fitbitProfile?.timezone}></Chip>
           </Typography>
-          <Typography variant='body1'>
+          <Typography variant='body1' component='div'>
             Devices: <Chip label={jamaspUser?.fitbitData?.access_token !== null ? "FitBit" : "None"}></Chip>
+          </Typography>
             {userDevices.map((device) => {
               return (
                 <Box key={device.deviceVersion}>
@@ -99,10 +104,6 @@ function UserProfile(props) {
                 </Box>
               );
             })}
-          </Typography>
-          <Typography variant='body1'>
-            Active Projects: <Chip label="TBI" color="error"></Chip>
-          </Typography>
           <Box>
             <Button variant='contained' color='error' sx={{ float: 'right' }}>Opt out of research</Button>
           </Box>

@@ -2,7 +2,7 @@ import { AppBar, Avatar, Box, Button, Container, IconButton, Menu, MenuItem, Too
 import { Menu as MenuIcon } from '@mui/icons-material';
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { logout } from '../../firebase';
+import { logout } from '../firebase';
 
 
 

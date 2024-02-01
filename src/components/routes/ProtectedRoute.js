@@ -1,6 +1,6 @@
 import { Box, Container, LinearProgress, Link, Typography } from '@mui/material';
 import { Navigate, Outlet } from 'react-router-dom';
-import Navbar from './Navbar';
+import Navbar from '../Navbar';
 
 const ProtectedRoute = ({ user, loading, children }) => {
 
