@@ -1,4 +1,4 @@
-import { Box, Button, Chip, Typography } from '@mui/material';
+import { Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from '@mui/material';
 import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../auth/AuthContext';
@@ -16,6 +16,7 @@ function UserProfile(props) {
   // User devices
   const [userDevices, setUserDevices] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [dialogOpen, setDialogOpen] = React.useState(false);
 
   useEffect(() => {
     //console.log('UserProfile useEffect user', user, loading)
@@ -64,12 +65,21 @@ function UserProfile(props) {
     }
   }, [user, loading]);
 
+  const handleClickOpen = () => {
+    setDialogOpen(true);
+  };
+
+  const handleClose = () => {
+    setDialogOpen(false);
+  };
+
   const handleConfirmDialogOutput = (value) => {
     console.log("handleDialogClose", value);
     //setAlert(null);
     if (value) {
       // TODO: Opt out of research
     }
+    setDialogOpen(false);
   };
 
   return (
@@ -94,15 +104,15 @@ function UserProfile(props) {
           )}
           {!isLoading && jamaspUser && jamaspUser.fitbitData && (
             <>
-            <Typography variant='body1' component='div'>
-              Joined on: <Chip label={jamaspUser?.createdAt?.toDate()?.toDateString()}></Chip>
-            </Typography>
-            <Typography variant='body1' component='div'>
-              Fitbit Timezone: <Chip label={fitbitProfile?.timezone}></Chip>
-            </Typography>
-            <Typography variant='body1' component='div'>
-              Devices: <Chip label={jamaspUser?.fitbitData?.access_token !== null ? "FitBit" : "None"}></Chip>
-            </Typography>
+              <Typography variant='body1' component='div'>
+                Joined on: <Chip label={jamaspUser?.createdAt?.toDate()?.toDateString()}></Chip>
+              </Typography>
+              <Typography variant='body1' component='div'>
+                Fitbit Timezone: <Chip label={fitbitProfile?.timezone}></Chip>
+              </Typography>
+              <Typography variant='body1' component='div'>
+                Devices: <Chip label={jamaspUser?.fitbitData?.access_token !== null ? "FitBit" : "None"}></Chip>
+              </Typography>
               {userDevices.map((device) => {
                 if (device.version === 'MobileTrack') {
                   return <></>;
@@ -124,9 +134,10 @@ function UserProfile(props) {
                   </Box>
                 );
               })}
-            <Box>
-              <Button variant='contained' color='error' sx={{ float: 'right' }}>Opt out of research</Button>
-            </Box>
+              <Box>
+                <Button variant='contained' color='error' sx={{ float: 'right' }}>Opt out of research</Button>
+                <ConfirmOptoutDialog handleDialogOutput={handleConfirmDialogOutput} />
+              </Box>
             </>
           )}
         </>

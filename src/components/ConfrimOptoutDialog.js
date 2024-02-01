@@ -6,7 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-export default function ConfirmOptoutDialog(handleDialogOutput) {
+export default function ConfirmOptoutDialog({handleDialogOutput}) {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -17,7 +17,7 @@ export default function ConfirmOptoutDialog(handleDialogOutput) {
     console.log("handleClose", selectValue);
     if(selectValue!==undefined && selectValue!==null && selectValue!==false){
       // TODO: callback to opt out
-      //handleDialogOutput(selectValue);
+      handleDialogOutput(selectValue);
     }
     setOpen(false);
   };
@@ -29,7 +29,7 @@ export default function ConfirmOptoutDialog(handleDialogOutput) {
       </Button>
       <Dialog
         open={open}
-        onClose={handleClose(undefined)}
+        onClose={() => handleClose(null)}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
@@ -46,8 +46,8 @@ export default function ConfirmOptoutDialog(handleDialogOutput) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose(false)}>Disagree</Button>
-          <Button onClick={handleClose(true)} autoFocus>
+          <Button onClick={() => handleClose(false)}>Disagree</Button>
+          <Button onClick={() => handleClose(true)} autoFocus>
             Agree
           </Button>
         </DialogActions>
