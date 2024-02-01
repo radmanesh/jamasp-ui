@@ -44,11 +44,6 @@ export default function App() {
             <Route path="/auth" element={<AuthLayout />} > {/* Wrap nested routes inside a Route component */}
               <Route exact path="/auth/login" element={<Login />} />
               <Route exact path="/auth/fitbit_callback" element={<OAuthCallback />} />
-              <Route exact path="/auth/signout" element={() => {
-                logout();
-                return (
-                  <Navigate to="/auth/login" replace />
-                )}} />                
               <Route path="*" element={<Navigate to="/notFound" />} />
             </Route>
             <Route path="/" element={<BlankLayout />} >

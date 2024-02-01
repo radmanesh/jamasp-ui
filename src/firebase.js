@@ -68,11 +68,15 @@ const signInWithGoogle = async () => {
 };
 
 const logout = () => {
-  signOut(auth);  
+  signOut(auth).then(() => {
+    // Do the sign out stuff here
+    //TODO: check if here is a good place for doing this
+  }).catch((error) => {
+    console.log(error);
+    //todo: setup alerts
+    //todo: log with firebase
+  });
 };
 
-export {
-  app, auth, analytics,
-  db, logout, signInWithGoogle
-};
+export { analytics, app, auth, db, logout, signInWithGoogle };
 

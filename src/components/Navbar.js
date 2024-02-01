@@ -32,7 +32,6 @@ function Navbar({ user, loading }) {
   };
 
   const handleCloseUserMenu = (event, path) => {
-    console.log("Close userMenu event", event,path)
     setAnchorElUser(null);
     if(path === 'backdropClick' || path === 'escapeKeyDown'){
       return;
@@ -40,7 +39,8 @@ function Navbar({ user, loading }) {
     //console.log(" path ", path)
     if(path === '/auth/signout'){
       logout();
-      navigate('/auth/signin', { replace: true });
+      navigate('/auth/login', { replace: true });
+      return;
     }
     if(path === '/profile'){
       navigate(path);

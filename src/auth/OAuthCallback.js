@@ -9,6 +9,7 @@ import { getOrRenewAccessToken } from './api';
 
 export default function OAuthCallback() {
   const [user, loading] = useAuthState(auth);
+  const [isLoading, setIsLoading] = React.useState(true);
   const navigate = useNavigate();
   
   useEffect(() => {
@@ -61,5 +62,7 @@ export default function OAuthCallback() {
     }
   }, [navigate, user, loading]);
 
-  return <div>Authenticating...</div>;
+  return (
+    <div>Authenticating...</div>
+  );
 }
