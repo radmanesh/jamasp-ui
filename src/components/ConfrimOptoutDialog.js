@@ -6,40 +6,48 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-export default function ConfirmOptoutDialog() {
+export default function ConfirmOptoutDialog(handleDialogOutput) {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
   };
 
-  const handleClose = () => {
+  const handleClose = (selectValue) => {
+    console.log("handleClose", selectValue);
+    if(selectValue!==undefined && selectValue!==null && selectValue!==false){
+      // TODO: callback to opt out
+      //handleDialogOutput(selectValue);
+    }
     setOpen(false);
   };
 
   return (
     <React.Fragment>
       <Button variant="outlined" onClick={handleClickOpen}>
-        Open alert dialog
+        Opt out of Research
       </Button>
       <Dialog
         open={open}
-        onClose={handleClose}
+        onClose={handleClose(undefined)}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          {"Use Google's location service?"}
+          Are you sure you want to opt out of research?
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Let Google help apps determine location. This means sending anonymous
-            location data to Google, even when no apps are running.
+            Are you sure you want to opt out of research? This will remove your data from the study and you will no longer be able to participate. 
+            <br />
+            You can NOT undo this action.
+            <br />
+            If you are sure you want to opt out, click Agree.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Disagree</Button>
-          <Button onClick={handleClose} autoFocus>
+          <Button onClick={handleClose(false)}>Disagree</Button>
+          <Button onClick={handleClose(true)} autoFocus>
             Agree
           </Button>
         </DialogActions>

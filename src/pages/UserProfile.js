@@ -3,17 +3,19 @@ import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../auth/AuthContext';
 import { fettchFitBitUser as fetchFitBitUser } from '../utils/firebase/users';
-import { set } from 'lodash';
+import ConfirmOptoutDialog from '../components/ConfrimOptoutDialog';
 
 function UserProfile(props) {
   const { user, loading } = useContext(AuthContext);
   const [jamaspUser, setJamaspUser] = useState(null);
   const [fitbitProfile, setFitbitProfile] = React.useState({});
   // Alerts to display to the user
-  //const [alert, setAlert] = React.useState(null);
+  // Use Context to set alerts
+  // const { setAlerts } = useContext(AlertsContext);
+  const [alerts, setAlerts] = React.useState([]);
   // User devices
   const [userDevices, setUserDevices] = React.useState([]);
-  const [iLoding, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   useEffect(() => {
     //console.log('UserProfile useEffect user', user, loading)
@@ -62,6 +64,14 @@ function UserProfile(props) {
     }
   }, [user, loading]);
 
+  const handleConfirmDialogOutput = (value) => {
+    console.log("handleDialogClose", value);
+    //setAlert(null);
+    if (value) {
+      // TODO: Opt out of research
+    }
+  };
+
   return (
     <Box sx={{ mt: 5, m: 1 }}>
       {loading && (
@@ -77,36 +87,48 @@ function UserProfile(props) {
           <Typography variant='body1' component='div'>
             Email: <Chip label={user.email}></Chip>
           </Typography>
-          <Typography variant='body1' component='div'>
-            Joined on: <Chip label={jamaspUser?.createdAt?.toDate()?.toDateString()}></Chip>
-          </Typography>
-          <Typography variant='body1' component='div'>
-            Fitbit Timezone: <Chip label={fitbitProfile?.timezone}></Chip>
-          </Typography>
-          <Typography variant='body1' component='div'>
-            Devices: <Chip label={jamaspUser?.fitbitData?.access_token !== null ? "FitBit" : "None"}></Chip>
-          </Typography>
-            {userDevices.map((device) => {
-              return (
-                <Box key={device.deviceVersion}>
-                  <Typography key={device.deviceVersion} variant="h5" component="h2" >
-                    {device.deviceVersion}
-                  </Typography>
-                  <Typography key={device.type} variant="body1" component="p">
-                    Type: {device.type}
-                  </Typography>
-                  <Typography key={device.battery} variant="body1" component="p">
-                    Battery: {device.battery} | Battery Level: {device.batteryLevel}
-                  </Typography>
-                  <Typography key={device.lastSyncTime} variant="body1" component="p" fontWeight={'bold'}>
-                    Last Sync Time: {device.lastSyncTime}
-                  </Typography>
-                </Box>
-              );
-            })}
-          <Box>
-            <Button variant='contained' color='error' sx={{ float: 'right' }}>Opt out of research</Button>
-          </Box>
+          {isLoading && (
+            <Typography variant='body1' component='div'>
+              Loading...
+            </Typography>
+          )}
+          {!isLoading && jamaspUser && jamaspUser.fitbitData && (
+            <>
+            <Typography variant='body1' component='div'>
+              Joined on: <Chip label={jamaspUser?.createdAt?.toDate()?.toDateString()}></Chip>
+            </Typography>
+            <Typography variant='body1' component='div'>
+              Fitbit Timezone: <Chip label={fitbitProfile?.timezone}></Chip>
+            </Typography>
+            <Typography variant='body1' component='div'>
+              Devices: <Chip label={jamaspUser?.fitbitData?.access_token !== null ? "FitBit" : "None"}></Chip>
+            </Typography>
+              {userDevices.map((device) => {
+                if (device.version === 'MobileTrack') {
+                  return <></>;
+                }
+                return (
+                  <Box key={device.deviceVersion}>
+                    <Typography key={device.deviceVersion} variant="h5" component="h2" >
+                      {device.deviceVersion}
+                    </Typography>
+                    <Typography key={device.type} variant="body1" component="p">
+                      Type: {device.type}
+                    </Typography>
+                    <Typography key={device.battery} variant="body1" component="p">
+                      Battery: {device.battery} | Battery Level: {device.batteryLevel}
+                    </Typography>
+                    <Typography key={device.lastSyncTime} variant="body1" component="p" fontWeight={'bold'}>
+                      Last Sync Time: {device.lastSyncTime}
+                    </Typography>
+                  </Box>
+                );
+              })}
+            <Box>
+              <Button variant='contained' color='error' sx={{ float: 'right' }}>Opt out of research</Button>
+            </Box>
+            </>
+          )}
         </>
       )}
     </Box>
