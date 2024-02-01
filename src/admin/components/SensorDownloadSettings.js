@@ -24,6 +24,9 @@ function SettingItem({ item, index, sensor, handleChange, itemSetting, settingTy
           ))}
         </TextField>
       )}
+      {item.type === 'time' && (
+        <TextField type="time" name={item.name} label={item.name} value={itemSetting ? itemSetting : item.defaultValue} onChange={(e) => handleChange(e, sensor, settingType)} />
+      )}
       {item.type === 'boolean' && (
         <FormControl>
           <FormControlLabel

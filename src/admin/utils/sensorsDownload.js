@@ -3,12 +3,12 @@ const downloadSensors = [
     id: "AZM_Intraday",
     label: "AZM Intraday",
     link: "/1/user/[user-id]/activities/active-zone-minutes/date/[start-date]/[end-date]/[detail-level].json",
-    description: "The number of minutes spent in each activity zone during the given day. The response includes activity log entries for the specified day.",
+    description: "This endpoint retrieves the active zone minute (AZM) intraday time series data on a specific date range or 24 hour period. Intraday support can extend the detail-level response to include 1min, 5min and 15min for Active Zone Minutes,",
     arguments: [
       { name: 'user-id', type: 'text', defaultValue: '-' },
       { name: 'start-date', type: 'date', defaultValue: '2024-01-01' },
       { name: 'end-date', type: 'date', defaultValue: '2024-01-01' },
-      { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '1min' },
+      { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '5min' },
     ],
     parameters: [
       { name: 'timezone', type: 'select', values: ['UTC'], defaultValue: 'UTC' }
@@ -17,12 +17,14 @@ const downloadSensors = [
   {
     id: "AZM_Intraday_byDate",
     label: "AZM Intraday by Date",
-    link: "/1/user/[user-id]/activities/active-zone-minutes/date/[start-date]/1d/[detail-level].json",
-    description: "The number of minutes spent in each activity zone during the given day. The response includes activity log entries for the specified day.",
+    link: "/1/user/[user-id]/activities/active-zone-minutes/date/[start-date]/1d/[detail-level]/time/[start-time]/[end-time].json",
+    description: "This endpoint retrieves the active zone minute (AZM) intraday time series data for a specific date or 24 hour period. \\n The number of minutes spent in each activity zone during the given day. The response includes activity log entries for the specified day.",
     arguments: [
       { name: 'user-id', type: 'text', defaultValue: '-' },
       { name: 'start-date', type: 'date', defaultValue: '2024-01-01' },
-      { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '1min' }
+      { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '5min' },
+      { name: 'start-time', type: 'time', defaultValue: '00:00' },
+      { name: 'end-time', type: 'time', defaultValue: '23:59' }
     ],
     parameters: []
   },
@@ -35,7 +37,7 @@ const downloadSensors = [
       { name: 'user-id', type: 'text', defaultValue: '-' },
       { name: 'start-date', type: 'date', defaultValue: '2024-01-01' },
       { name: 'end-date', type: 'date', defaultValue: '2024-01-01' },
-      { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '1min' }
+      { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '5min' }
     ],
     //defaultValues: ['-', ['calories' , 'distance', 'elevation', 'floors', 'steps'] ,'2023-12-10', '2024-01-01', '1min'],
     parameters: []
@@ -44,11 +46,11 @@ const downloadSensors = [
     id: "Activity_Steps_Intraday_byDate",
     label: "Activity Steps Time Series Intraday By Date",
     link: "/1/user/[user-id]/activities/steps/date/[start-date]/1d/[detail-level].json",
-    description: "retrieves the activity intraday time series data for steps taken on a specific date range for a 24 hour period.",
+    description: "This endpoint retrieves the activity intraday time series data for step resource on a specific date or 24 hour period. Intraday support can extend the detail-level response to include 1min, 5min and 15min for Activity.",
     arguments: [
       { name: 'user-id', type: 'text', defaultValue: '-' },
       { name: 'start-date', type: 'date', defaultValue: '2024-01-01' },
-      { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '1min' }
+      { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '5min' }
     ],
     //defaultValues: ['-', ['calories' , 'distance', 'elevation', 'floors', 'steps'] ,'2023-12-10', '2024-01-01', '1min'],
     parameters: []
@@ -57,11 +59,11 @@ const downloadSensors = [
     id: "Activity_Calories_Intraday_byDate",
     label: "Activity Calories Time Series Intraday By Date",
     link: "/1/user/[user-id]/activities/calories/date/[start-date]/1d/[detail-level].json",
-    description: "retrieves the activity intraday time series data for calories burned on a specific date range for a 24 hour period.",
+    description: "This endpoint retrieves the activity intraday time series data for calories resource on a specific date or 24 hour period. Intraday support can extend the detail-level response to include 1min, 5min and 15min for Activity.",
     arguments: [
       { name: 'user-id', type: 'text', defaultValue: '-' },
       { name: 'start-date', type: 'date', defaultValue: '2024-01-01' },
-      { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '1min' }
+      { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '5min' }
     ],
     //defaultValues: ['-', ['calories' , 'distance', 'elevation', 'floors', 'steps'] ,'2023-12-10', '2024-01-01', '1min'],
     parameters: []
@@ -70,11 +72,11 @@ const downloadSensors = [
     id: "Activity_Distance_Intraday_byDate",
     label: "Activity Distance Time Series Intraday By Date",
     link: "/1/user/[user-id]/activities/distance/date/[start-date]/1d/[detail-level].json",
-    description: "retrieves the activity intraday time series data for distance journeyed on a specific date range for a 24 hour period.",
+    description: "This endpoint retrieves the activity intraday time series data for distance resource on a specific date or 24 hour period. Intraday support can extend the detail-level response to include 1min, 5min and 15min for Activity.",
     arguments: [
       { name: 'user-id', type: 'text', defaultValue: '-' },
       { name: 'start-date', type: 'date', defaultValue: '2024-01-01' },
-      { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '1min' }
+      { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '5min' }
     ],
     //defaultValues: ['-', ['calories' , 'distance', 'elevation', 'floors', 'steps'] ,'2023-12-10', '2024-01-01', '1min'],
     parameters: []
@@ -87,7 +89,7 @@ const downloadSensors = [
     arguments: [
       { name: 'user-id', type: 'text', defaultValue: '-' },
       { name: 'start-date', type: 'date', defaultValue: '2024-01-01' },
-      { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '1min' }
+      { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '5min' }
     ],
     //defaultValues: ['-', ['calories' , 'distance', 'elevation', 'floors', 'steps'] ,'2023-12-10', '2024-01-01', '1min'],
     parameters: []
@@ -100,7 +102,7 @@ const downloadSensors = [
     arguments: [
       { name: 'user-id', type: 'text', defaultValue: '-' },
       { name: 'start-date', type: 'date', defaultValue: '2024-01-01' },
-      { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '1min' }
+      { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '5min' }
     ],
     //defaultValues: ['-', ['calories' , 'distance', 'elevation', 'floors', 'steps'] ,'2023-12-10', '2024-01-01', '1min'],
     parameters: []
@@ -125,7 +127,7 @@ const downloadSensors = [
     arguments: [
       { name: 'user-id', type: 'text', defaultValue: '-' },
       { name: 'start-date', type: 'date', defaultValue: '2024-01-01' },
-      { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '1min' }
+      { name: 'detail-level', type: 'select', values: ['1min', '5min', '15min'], defaultValue: '5min' }
     ],
     parameters: [
       { name: 'timezone', type: 'select', values: ['UTC'], defaultValue: 'UTC' }
@@ -236,7 +238,7 @@ const downloadSensors = [
     id:"AZM_Time_Series_byInterval",
     label:"Get AZM Time Series by Interval (no Intraday)",
     link: "/1/user/[user-id]/activities/active-zone-minutes/date/[start-date]/[end-date].json",
-    description: "The number of minutes spent in each activity zone during the given day. The response includes activity log entries for the specified day.",
+    description: "This endpoint returns the daily summary values over an interval by specifying a date range.",
     arguments: [
       { name: 'user-id', type: 'text', defaultValue: '-' },
       { name: 'start-date', type: 'date',  defaultValue: '2024-01-01' },
@@ -247,7 +249,7 @@ const downloadSensors = [
   {
     id:"AZM_Time_Series_byDate",
     label:"Get AZM Time Series by Date (no Intraday)",
-    description: "The number of minutes spent in each activity zone during the given day. The response includes activity log entries for the specified day.",
+    description: "This endpoint returns the daily summary values over a period of time by specifying a date and time period.",
     link: "/1/user/[user-id]/activities/active-zone-minutes/date/[date]/[period].json",
     arguments: [
       { name: 'user-id', type: 'text', defaultValue: '-' },
@@ -504,8 +506,7 @@ const downloadSensors = [
     description:"Retrieves the user's profile data.",
     link:"/1/user/[user-id]/profile.json",
     arguments:[
-      { name: 'user-id', type: 'text', defaultValue: '-' },
-      { name: 'start-date', type: 'date',  defaultValue: '2023-12-10'}
+      { name: 'user-id', type: 'text', defaultValue: '-' }
     ],
     parameters:[]
   }
