@@ -107,11 +107,6 @@ const ShowProject = () => {
     return unsubscribe;
   }, [projectId]);
 
-  async function renderResponses() {
-    // 
-    return (<></>);
-  }
-
   /**
    * Handles the user devices input.
    * @param {string} name - The name of the device.
