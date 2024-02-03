@@ -1,12 +1,13 @@
+import { Typography } from '@mui/material';
+import { Box } from '@mui/system';
 import React from 'react';
 
 const NotFound = () => {
   return (
-    <div>
-      <h1>Not Found</h1>
-      <p className='lead'>The page you are looking for does not exist...</p>
-
-    </div>
+    <Box sx={{ mt: 5, m: 1 }}>
+      <Typography variant="h1">Not Found</Typography>
+      <Typography variant='body1' >The page you are looking for does not exist...</Typography>
+    </Box>
   );
 };  
 

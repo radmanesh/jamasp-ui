@@ -2,9 +2,9 @@ import { ThumbUp as ThumbUpIcon } from '@mui/icons-material';
 import { Container, Paper, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import AuthenticationBtn from './auth/AuthenticationBtn';
-import { getFitbitAuthState, removeDevice } from './auth/FitbitAuth';
-import { auth } from './firebase';
+import AuthenticationBtn from '../auth/AuthenticationBtn';
+import { getFitbitAuthState, removeDevice } from '../auth/FitbitAuth';
+import { auth } from '../firebase';
 
 const Dashboard = () => {
   const [user, loading] = useAuthState(auth);

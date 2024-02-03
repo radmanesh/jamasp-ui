@@ -1,6 +1,6 @@
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Navigate, Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import Dashboard from "./Dashboard";
+import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./admin/AdminDashboard";
 import NewProject from "./admin/NewProject";
 import ShowProject from "./admin/ShowProject";
@@ -16,6 +16,9 @@ import Users from "./admin/pages/Users";
 import About from "./pages/About";
 import ShowUser from "./admin/pages/ShowUser";
 import UserProfile from "./pages/UserProfile";
+import PhoneLogin from "./auth/PhoneLogin";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 
 // eslint-disable-next-line import/no-anonymous-default-export
 

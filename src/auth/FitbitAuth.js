@@ -143,15 +143,15 @@ const getFitbitAuthState = async function (userId) {
  * @returns {boolean} - True if the token has expired, false otherwise.
  */
 function checkTokenExpiration(token) {
-  const expiresAt = token.timestamp.seconds + token.expires_in;
-  const currentTime = Timestamp.now().seconds;
-  if (expiresAt < currentTime) {
-    console.log("token is expired");
-    return true;
-  } else {
-    console.log("token is not expired");
-    return false;
+  let expired = false;
+  if(token?.timestamp === undefined || token?.expires_in === undefined || token?.timestamp === null || token?.expires_in === null) {
+    expired = true;
+  }else{
+    if(token.timestamp.seconds+token.expires_in < Timestamp.now().seconds) {
+      expired = true;
+    }
   }
+  return expired;
 }
 
 /**

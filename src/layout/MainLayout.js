@@ -26,7 +26,7 @@ function Copyright(props) {
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
       <Link color="inherit" href="https://jamasp.cut.social/">
-        Jamasp®
+        Jamasp
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
